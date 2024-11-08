@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 app.get('/test-db', async (req, res) => {
         try {
             const pool = await poolPromise;
-            const result = await pool.request().query('SELECT 1 AS result');
+            const result = await pool.request().query('SELECT * FROM dbo.estado_tarea');
             res.status(200).json(result.recordset);
         } catch (err) {
             res.status(500).send(err.message);
