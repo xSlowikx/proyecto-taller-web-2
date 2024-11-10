@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TareaDTO_In } from '../../models/tarea';
+import { TareaDTO_In } from '../../models/tarea/tarea.model';
 
 @Component({
   selector: 'app-tarea',

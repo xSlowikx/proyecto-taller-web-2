@@ -6,14 +6,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TareaComponent } from './pages/tarea/tarea.component';
 import { HeaderComponent } from './pages/header/header.component';
-import { AddEditTareaComponent } from './pages/tarea/add-edit-tarea/add-edit-tarea.component';
+import { AddEditTareaComponent } from './pages/tarea/components/add-edit-tarea/add-edit-tarea.component';
+import { LoginComponent } from './pages/login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TareaComponent,
     HeaderComponent,
-    AddEditTareaComponent
+    AddEditTareaComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
