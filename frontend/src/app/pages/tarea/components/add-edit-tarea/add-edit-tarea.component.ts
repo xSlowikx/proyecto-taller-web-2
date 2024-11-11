@@ -64,7 +64,7 @@ export class AddEditTareaComponent {
       let tarea = this.mapearTarea();
       if(this.editMode){
         this._tareaService
-        .editarTarea(tarea)
+        .updateTask(tarea)
         .then((x) => this.goBack())
           .catch((e) => {
             this.dialog.open(ErrorDialogComponent, {
@@ -77,7 +77,7 @@ export class AddEditTareaComponent {
           });
       } else {
         this._tareaService
-          .crearTarea(tarea)
+          .creatTask(tarea)
           .then((x) => this.goBack())
           .catch((e) => {
             this.dialog.open(ErrorDialogComponent, {
@@ -101,6 +101,7 @@ export class AddEditTareaComponent {
       description: this.formTarea.get('descripcion')?.value.toString() ?? '',
       user_id: this.user, // ver como traerlo 
       priority_id: this.formTarea.get('prioridad')?.value.toString() ?? '',
+      state_id: null // en back se modifica
     }
     return tarea;
   }

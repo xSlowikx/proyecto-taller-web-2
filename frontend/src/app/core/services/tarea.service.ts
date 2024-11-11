@@ -22,9 +22,9 @@ export class TareaService extends ApiGenericService {
     super(httpClient, ENVIRONMENT.API_URL, ENDPOINTS.TAREA);
   }
 
-  async getAllTareas(): Promise<TareaTablaDTO_In[]> {
+  async getAllTareas(): Promise<TareaTablaDTO_In[]> { // ok
     return await this.apiService
-      .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA)
+      .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_ALL)
       .pipe(
         map((response) => {
           if (response) {
@@ -36,9 +36,10 @@ export class TareaService extends ApiGenericService {
       .toPromise();
   }
 
-  async getById(id: number): Promise<TareaDTO_In> { // para el edit o el ver tarea
+  //ok
+  async taskDetail(id: number): Promise<TareaDTO_In> { // para el edit o el ver tarea
     return await this.apiService
-      .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA, id.toString())
+      .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_DETAIL, id.toString())
       .pipe(
         map((response) => {
           if (response) {
@@ -50,30 +51,23 @@ export class TareaService extends ApiGenericService {
       .toPromise();
   }
 
-  async eliminarTareaById(id: number): Promise<void> {
+  async eliminarTareaById(id: number): Promise<void> { // este esta ok
     const url = `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_DELETE}/${id}`;
     return await this.httpClient.put<void>(url, {}).toPromise();
   }
 
-  async editarTarea(tarea: TareaDTO_Out): Promise<any> {
-    var data = this.generarFormDataCrear(tarea);
+  async updateTask(tarea: TareaDTO_Out): Promise<any> {
+    const data = this.generarFormDataCrear(tarea);
     return await this.apiMultiPartService
-      .put<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA, data)
-      .pipe(
-        map((response) => {
-          if (response) {
-            return response;
-          }
-          return null;
-        })
-      )
+      .put<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_UPDATE, data)
       .toPromise();
   }
+  
 
-  async crearTarea(tarea: TareaDTO_Out): Promise<any> {
+  async creatTask(tarea: TareaDTO_Out): Promise<any> {
     var data = this.generarFormDataCrear(tarea);
     return await this.apiMultiPartService
-      .post<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA, data)
+      .post<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_CREATE, data)
       .pipe(
         map((response) => {
           if (response) {

@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 import { TareaDTO_In } from '../../core/models/tarea/tarea.model';
 import { MatDialog } from '@angular/material/dialog';
-import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tarea',
   templateUrl: './tarea.component.html',
-  styleUrl: './tarea.component.scss'
+  styleUrls: ['./tarea.component.scss']
 })
-export class TareaComponent {
-  
+export class TareaComponent implements OnInit {
   tareas: TareaDTO_In[] = [
     {
       id_task: 1,
@@ -40,22 +41,30 @@ export class TareaComponent {
       completed_at: null,
       priority_id: 1,
       state_id: 1
-    }
-  ];
+    }];
+  
+  dataSource = new MatTableDataSource<TareaDTO_In>();
+  displayedColumns: string[] = ['titulo', 'descripcion', 'prioridad', 'creado', 'estado', 'acciones'];
+  
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  constructor(public dialog: MatDialog, private router: Router) {}
 
-  constructor(
-    public dialog: MatDialog,
-  ){}
-
-  ngOnInit(){
-    this.dialog.open(ErrorDialogComponent, {
-      width: '600px',
-      data: {
-        titulo: 'Atención',
-        mensaje: 'holi',
-      },
-    });
+  ngOnInit() {
+    // Initialize the data source
+    this.dataSource.data = this.tareas;
   }
 
+  ngAfterViewInit() {
+    // Set the paginator after the view is initialized
+    this.dataSource.paginator = this.paginator;
+  }
+
+  createTask() {
+    // Implementation for creating a task
+  }
+
+  editar(id: number, edit: boolean) {
+    this.router.navigate(['/tarea/edit'], { state: { id: id, editMode: true } });
+  }
 }
