@@ -5,8 +5,8 @@ import {
   ApiService,
 } from './api.service';
 import { HttpClient } from '@angular/common/http';
-import { ENVIRONMENT } from '../environments/environment';
-import { ENDPOINTS } from '../core/constants/endpoints';
+import { ENVIRONMENT } from '../../../environments/environment';
+import { ENDPOINTS } from '../constants/endpoints';
 import { map } from 'rxjs';
 import { TareaDTO_In, TareaTablaDTO_In, TareaDTO_Out } from '../models/tarea/tarea.model';
 
@@ -107,10 +107,6 @@ export class TareaService extends ApiGenericService {
     formData.append(
       'priority_id',
       tarea.priority_id ? tarea.priority_id.toString() : '0'
-    );
-    formData.append(
-      'state_id',
-      tarea.state_id ? tarea.state_id.toString() : '0'
     );
     
     return formData;

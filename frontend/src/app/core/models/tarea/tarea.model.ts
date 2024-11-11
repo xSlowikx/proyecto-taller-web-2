@@ -31,5 +31,5 @@ export class TareaDTO_Out {
   //completed_at: string | null = ''; // se completa en el back
   user_id: number = 0;
   priority_id: number = 0;
-  state_id: number | null = 0;
+  //state_id: number | null = 0;
 }
