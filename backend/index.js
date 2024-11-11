@@ -1,29 +1,23 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const { poolPromise} = require('./db-connection');
-require('dotenv').config();
+const sessionMiddleware = require('./config/session-config');
+const authRoutes = require('./routes/auth-routes');
+const taskRoutes = require('./routes/task-routes');
+const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(bodyParser.json());
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(sessionMiddleware);
 
-// Test endpoint
-app.get('/', (req, res) => {
-    res.send('API is running...');
-});
+console.log("INDEX, SESSIONMIDDLEWARE ->", {sessionMiddleware});
 
-app.get('/test-db', async (req, res) => {
-        try {
-            const pool = await poolPromise;
-            const result = await pool.request().query('SELECT * FROM dbo.estado_tarea');
-            res.status(200).json(result.recordset);
-        } catch (err) {
-            res.status(500).send(err.message);
-        }
-})
+// Rutas
+app.use('/auth', authRoutes);
+app.use('/task', taskRoutes);
 
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
 });
