@@ -13,15 +13,17 @@ import { MatTableModule } from '@angular/material/table'; // Import MatTableModu
 import { MatPaginatorModule } from '@angular/material/paginator'; // Optional if using paginator
 import { MatSortModule } from '@angular/material/sort'; // Optional if using sorting
 import { MatIconModule } from '@angular/material/icon';
+import { TareaModule } from './pages/tarea/tarea.module';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
     TareaComponent,
     HeaderComponent,
-    AddEditTareaComponent,
-    LoginComponent
+    LoginComponent,
   ],
   imports: [
+    TareaModule,
     BrowserModule,
     BrowserAnimationsModule, // Add BrowserAnimationsModule
     AppRoutingModule,
@@ -30,7 +32,10 @@ import { MatIconModule } from '@angular/material/icon';
     MatTableModule, // Add MatTableModule here
     MatPaginatorModule, // Optional
     MatSortModule, // Optional
-    MatIconModule
+    MatIconModule,
+    AddEditTareaComponent,
+    HttpClientModule
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

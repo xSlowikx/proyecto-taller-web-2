@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-tarea',
   templateUrl: './tarea.component.html',
+  standalone: false,
   styleUrls: ['./tarea.component.scss']
 })
 export class TareaComponent implements OnInit {
@@ -63,8 +64,7 @@ export class TareaComponent implements OnInit {
   createTask() {
     // Implementation for creating a task
   }
-
-  editar(id: number, edit: boolean) {
-    this.router.navigate(['/tarea/edit'], { state: { id: id, editMode: true } });
+  editar(id: number) {
+    this.router.navigate(['/tareas/edit', id]);
   }
 }

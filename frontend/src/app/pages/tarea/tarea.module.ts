@@ -1,13 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TareaRoutes } from './tarea.routing';
+
+import { AddEditTareaComponent } from './components/add-edit-tarea/add-edit-tarea.component';
+import { TareaComponent } from './tarea.component';
 
 @NgModule({
-    declarations: [],
     imports: [
       CommonModule,
-      RouterModule.forChild(TareaRoutes),
+      RouterModule,
+      AddEditTareaComponent
     ],
   })
   export class TareaModule {}

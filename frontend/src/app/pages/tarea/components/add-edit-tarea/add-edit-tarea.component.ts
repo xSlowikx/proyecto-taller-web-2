@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { SelectDTO_In } from '../../../../core/models/select/select.model';
 import { TareaService } from '../../../../core/services/tarea.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TareaDTO_Out } from '../../../../core/models/tarea/tarea.model';
 import { ErrorDialogComponent } from '../../../../components/error-dialog/error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,9 +16,10 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-add-edit-tarea',
   templateUrl: './add-edit-tarea.component.html',
-  styleUrl: './add-edit-tarea.component.scss',
+  styleUrls: ['./add-edit-tarea.component.scss'],
+  standalone: true
 })
-export class AddEditTareaComponent {
+export class AddEditTareaComponent implements OnInit {
   id: number = 0;
   user: number = 0;
   editMode: boolean = false;
@@ -29,25 +30,23 @@ export class AddEditTareaComponent {
   constructor(
     public dialog: MatDialog,
     private _tareaService: TareaService,
-    //private _prioridadService: PrioridadService,
+    private route: ActivatedRoute,
     private router: Router
-  ) {
-    this.editMode = this.router.url.includes('edit');
-    if (
-      this.editMode &&
-      !this.router.getCurrentNavigation()?.extras.state?.['id']
-    )
-      this.goBack();
-    this.id = this.router.getCurrentNavigation()?.extras.state?.['id'];
-    if (this.editMode) {
-      this.title = 'Editar Tarea';
-    }
-    if (!this.id && this.editMode) {
-      this.goBack();
-    }
-  }
+  ) {}
 
   ngOnInit() {
+    // Acceder al parámetro 'id' de la URL
+    this.route.params.subscribe((params) => {
+      this.id = +params['id']; // Convertir el id a número
+      this.editMode = this.router.url.includes('edit');
+      if (this.editMode) {
+        this.title = 'Editar Tarea';
+      }
+      if (!this.id && this.editMode) {
+        this.goBack(); // Si no hay id y se está en modo edición, volver
+      }
+    });
+
     this.crearFormulario();
   }
 
@@ -59,13 +58,13 @@ export class AddEditTareaComponent {
     });
   }
 
-  onSubmit(){
-    if(this.formTarea.valid){
+  onSubmit() {
+    if (this.formTarea.valid) {
       let tarea = this.mapearTarea();
-      if(this.editMode){
+      if (this.editMode) {
         this._tareaService
-        .updateTask(tarea)
-        .then((x) => this.goBack())
+          .updateTask(tarea)
+          .then(() => this.goBack())
           .catch((e) => {
             this.dialog.open(ErrorDialogComponent, {
               width: '600px',
@@ -78,7 +77,7 @@ export class AddEditTareaComponent {
       } else {
         this._tareaService
           .creatTask(tarea)
-          .then((x) => this.goBack())
+          .then(() => this.goBack())
           .catch((e) => {
             this.dialog.open(ErrorDialogComponent, {
               width: '600px',
@@ -94,15 +93,15 @@ export class AddEditTareaComponent {
     }
   }
 
-  private mapearTarea() : TareaDTO_Out {
+  private mapearTarea(): TareaDTO_Out {
     let tarea: TareaDTO_Out = {
       id_task: this.id ?? 0,
       title: this.formTarea.get('titulo')?.value.toString() ?? '',
       description: this.formTarea.get('descripcion')?.value.toString() ?? '',
-      user_id: this.user, // ver como traerlo 
+      user_id: this.user, // ver cómo traerlo
       priority_id: this.formTarea.get('prioridad')?.value.toString() ?? '',
-      state_id: null // en back se modifica
-    }
+      state_id: null // En back se modifica
+    };
     return tarea;
   }
 
@@ -116,6 +115,6 @@ export class AddEditTareaComponent {
   }
 
   goBack(): void {
-    this.router.navigate(['/tarea']);
+    this.router.navigate(['/tareas']);
   }
 }
