@@ -15,12 +15,14 @@ import { MatSortModule } from '@angular/material/sort'; // Optional if using sor
 import { MatIconModule } from '@angular/material/icon';
 import { TareaModule } from './pages/tarea/tarea.module';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { LoginModule } from './pages/login/login.module';
 @NgModule({
   declarations: [
     AppComponent,
     TareaComponent,
     HeaderComponent,
-    LoginComponent,
+   
   ],
   imports: [
     TareaModule,
@@ -34,7 +36,10 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     MatSortModule, // Optional
     MatIconModule,
     AddEditTareaComponent,
-    HttpClientModule
+    HttpClientModule,
+    MatCheckbox,
+    LoginModule,
+    LoginComponent,
     
   ],
   providers: [],

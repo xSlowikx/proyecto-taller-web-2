@@ -11,6 +11,7 @@ export interface TareaTablaDTO_In {
 }
 
 export interface TareaDTO_In {
+  rowClass: string;
   id_task: number;
   title: string;
   description: string;

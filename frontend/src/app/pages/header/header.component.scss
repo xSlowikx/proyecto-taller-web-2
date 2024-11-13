@@ -1,0 +1,68 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+.navbar {
+    background-color: #6B9C89 !important;
+    border-radius: 10px;
+}
+
+.btn-crear {
+    color: #f2e6d0;
+    border: 2px solid #f2e6d0;
+    font-family: "Poppins";
+    &:hover {
+        background-color: #154038;
+        border: 2px solid #f2e6d0;
+    }
+}
+
+h1 {
+    color: #f2e6d0;
+    font-weight: 900;
+    font-family: "Nunito";
+    margin: 0;
+}
+
+.btn-user {
+    border: 2px solid #f2e6d0;
+    fill: #f2e6d0;
+
+    &:hover {
+        border: 2px solid #f2e6d0;
+        fill: #f2e6d0;
+        background-color: #154038;
+    }
+}
+
+.btn-tarea {
+    background-color: #6B9C89;
+    color: #f2e6d0;
+    border: 0;
+    font-family: "Poppins";
+
+    &:hover {
+        background-color: #154038;
+    }
+}
+
+.btn-dark {
+    background-color: #154038; /* Color oscuro */
+    border-color: #154038;    /* Borde oscuro */
+    color: white;             /* Texto blanco */
+  }
+  
+
+  .btn-tarea {
+    &.btn-outline-success {
+      border-color: #6B9C89;
+      color: #f2e6d0;
+    }
+    &:hover {
+      background-color: #154038;
+      color: white;
+    }
+  }

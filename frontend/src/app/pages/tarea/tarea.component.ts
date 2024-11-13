@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { TareaDTO_In } from '../../core/models/tarea/tarea.model';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-tarea',
@@ -21,7 +22,8 @@ export class TareaComponent implements OnInit {
       modified_at: null,
       completed_at: null,
       priority_id: 3,
-      state_id: null
+      state_id: null,
+      rowClass: ''
     },
     {
       id_task: 2,
@@ -31,7 +33,8 @@ export class TareaComponent implements OnInit {
       modified_at: '2024-11-08T12:00:00.000Z',
       completed_at: null,
       priority_id: 2,
-      state_id: null
+      state_id: null,
+      rowClass: ''
     },
     {
       id_task: 3,
@@ -41,19 +44,22 @@ export class TareaComponent implements OnInit {
       modified_at: null,
       completed_at: null,
       priority_id: 1,
-      state_id: 1
+      state_id: 1,
+      rowClass: ''
     }];
   
   dataSource = new MatTableDataSource<TareaDTO_In>();
-  displayedColumns: string[] = ['titulo', 'descripcion', 'prioridad', 'creado', 'estado', 'acciones'];
+  displayedColumns: string[] = ['estado', 'titulo', 'descripcion', 'prioridad', 'creado',  'acciones'];
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(public dialog: MatDialog, private router: Router) {}
 
   ngOnInit() {
-    // Initialize the data source
-    this.dataSource.data = this.tareas;
+    this.dataSource.data = this.tareas.map(task => ({
+      ...task,
+      rowClass: task.state_id === 1 ? 'tachado' : ''
+    }));
   }
 
   ngAfterViewInit() {
@@ -66,5 +72,18 @@ export class TareaComponent implements OnInit {
   }
   editar(id: number) {
     this.router.navigate(['/tareas/edit', id]);
+  }
+  toggleRow(checked: boolean, element: TareaDTO_In, checkbox: MatCheckbox) {
+    // Cambiar el estado del elemento
+    element.state_id = checked ? 1 : 0;
+    
+    // Cambiar la clase de la fila según el estado
+    element.rowClass = element.state_id === 1 ? 'tachado' : '';
+    
+    // Obtener la fila más cercana y alternar la clase 'tachado'
+    const row = checkbox._elementRef.nativeElement.closest('tr'); // Usamos nativeElement para acceder al tr
+    if (row) {
+      row.classList.toggle('tachado', checked); // Tacha o destacha la fila según el estado del checkbox
+    }
   }
 }

@@ -5,7 +5,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { AddEditTareaComponent } from './pages/tarea/components/add-edit-tarea/add-edit-tarea.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/tareas', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'tareas', component: TareaComponent },
   { path: 'login', component: LoginComponent },
   { path: 'tareas/edit/:id', component:AddEditTareaComponent},

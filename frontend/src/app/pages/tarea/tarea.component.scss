@@ -1,0 +1,52 @@
+.fondo{
+    background-color: rgba(64, 30, 15, 0.66);
+}
+
+.fondo2{
+    background-color: rgba(64, 30, 15, 0.062);
+}
+
+.text-left, .text-center{
+    font-family: Poppins;
+    color:#f2e6d0;
+}
+
+.titulo{
+    font-family: "Nunito";
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.btn-accion {
+    background-color: #f2e6d0; 
+    border-radius: 4px; 
+    padding: 6px;
+    margin: 0 4px;
+  
+    &:hover {
+      background-color: #dfcca7;
+    }
+  
+    mat-icon {
+      color: rgba(64, 30, 15, 0.508);
+      font-size: 24px;
+  }
+}
+
+.fondo-abajo{
+    background-color: rgba(64, 30, 15, 0.062);
+    color:#f2e6d0;
+    font-family: Poppins;
+    font-size: 13px;
+}
+
+
+.tachado {
+    text-decoration: line-through;
+    background-color: rgba(78, 67, 61, 0.748);
+    color: #000000;
+    .text-center, .text-left{
+        color:rgba(162, 140, 128, 0.748);
+}
+    
+}
