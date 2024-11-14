@@ -12,12 +12,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TareaDTO_Out } from '../../../../core/models/tarea/tarea.model';
 import { ErrorDialogComponent } from '../../../../components/error-dialog/error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MaterialModule } from '../../../../material.module';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-edit-tarea',
   templateUrl: './add-edit-tarea.component.html',
   styleUrls: ['./add-edit-tarea.component.scss'],
-  standalone: true
+  standalone: true,
+  imports:[MaterialModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,]
 })
 export class AddEditTareaComponent implements OnInit {
   id: number = 0;
@@ -26,6 +32,7 @@ export class AddEditTareaComponent implements OnInit {
   title: string = 'Crear tarea';
   formTarea!: FormGroup;
   prioridades: SelectDTO_In[] = [];
+  filteredPrioridades: SelectDTO_In[] = [];
 
   constructor(
     public dialog: MatDialog,
@@ -40,7 +47,7 @@ export class AddEditTareaComponent implements OnInit {
       this.id = +params['id']; // Convertir el id a número
       this.editMode = this.router.url.includes('edit');
       if (this.editMode) {
-        this.title = 'Editar Tarea';
+        this.title = 'Editar tarea';
       }
       if (!this.id && this.editMode) {
         this.goBack(); // Si no hay id y se está en modo edición, volver
@@ -55,6 +62,7 @@ export class AddEditTareaComponent implements OnInit {
       titulo: new FormControl('', [Validators.required]),
       descripcion: new FormControl('', [Validators.required]),
       prioridad: new FormControl('', [Validators.required]),
+      filteredPrioridad: new FormControl('', []),
     });
   }
 

@@ -1,1 +1,77 @@
-<p>add-edit-tarea works!</p>
+<mat-card class="cardWithShadow theme-card mt-2">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{ title }}</mat-card-title>
+  </mat-card-header>
+<form [formGroup]="formTarea" (ngSubmit)="onSubmit()">
+    <mat-card-content class="b-t-1">
+      <div class="row m-t-20">
+
+            <!-- Título -->
+            <div class="col-lg-4 mb-3">
+              <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">Título *</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input
+                  matInput
+                  formControlName="titulo"
+                  placeholder="Ingrese el título"
+                />
+                <mat-error>{{ errorMessage("titulo") }}</mat-error>
+              </mat-form-field>
+            </div>
+        
+            <!-- Descripción -->
+            <div class="col-lg-4 mb-3">
+              <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">Descripción *</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <textarea
+                  matInput
+                  formControlName="descripcion"
+                  placeholder="Ingrese la descripción"
+                  rows="3"
+                ></textarea>
+                <mat-error>{{ errorMessage("descripcion") }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block"
+            >Prioridad *</mat-label
+          >
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-select
+              #mySelect
+              formControlName="prioridad"
+              placeholder="Seleccione un Jefe de Equipo"
+              aria-modal
+            >
+              <mat-option>
+                <ngx-mat-select-search
+                  (keydown.enter)="$event.stopPropagation()"
+                  formControlName="buscarJefeEquipo"
+                  placeholderLabel="Buscar Jefe de Equipo"
+                  noEntriesFoundLabel=""
+                ></ngx-mat-select-search
+              ></mat-option>
+              <mat-option
+                *ngFor="let prioridad of filteredPrioridades"
+                [value]="prioridad.id"
+              >
+                {{ prioridad.description }}
+              </mat-option>
+            </mat-select>
+            <mat-error class="mat-error">{{
+              errorMessage("prioridad")
+            }}</mat-error>
+          </mat-form-field>
+        
+      </div>
+    </mat-card-content>
+    
+    <mat-card-actions class="b-t-1">
+      <button mat-flat-button color="warn" type="button" (click)="goBack()">
+        Cancelar
+      </button>
+      <button mat-flat-button color="primary" class="m-l-8" type="submit">
+        Guardar Tarea
+      </button>
+    </mat-card-actions>
+  </form>

@@ -9,7 +9,7 @@ const routes: Routes = [
   { path: 'tareas', component: TareaComponent },
   { path: 'login', component: LoginComponent },
   { path: 'tareas/edit/:id', component:AddEditTareaComponent},
-  { path: 'tareas/add/:id', component:AddEditTareaComponent},
+  { path: 'tareas/add', component:AddEditTareaComponent},
 
 ];
 
