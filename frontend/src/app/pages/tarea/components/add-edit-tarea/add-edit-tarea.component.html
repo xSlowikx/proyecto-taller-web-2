@@ -40,14 +40,14 @@
             <mat-select
               #mySelect
               formControlName="prioridad"
-              placeholder="Seleccione un Jefe de Equipo"
+              placeholder="Seleccione una prioridad"
               aria-modal
             >
               <mat-option>
                 <ngx-mat-select-search
                   (keydown.enter)="$event.stopPropagation()"
-                  formControlName="buscarJefeEquipo"
-                  placeholderLabel="Buscar Jefe de Equipo"
+                  formControlName="filteredPrioridad"
+                  placeholderLabel="Buscar prioridad"
                   noEntriesFoundLabel=""
                 ></ngx-mat-select-search
               ></mat-option>
