@@ -18,4 +18,7 @@ export class HeaderComponent {
       });
     }
   
+    agregar(){
+      this.router.navigate(['/tareas/add']);
+    }
 }
