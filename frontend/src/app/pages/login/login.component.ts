@@ -1,24 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';  // Asegúrate de importar NgForm
+import { FormControl, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms'; 
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';  // Importa FormsModule aquí
+import { FormsModule } from '@angular/forms'; 
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [FormsModule]
+  imports: [ReactiveFormsModule]
  
 })
 export class LoginComponent {
+  formLogin!: FormGroup;
   constructor(private router: Router) {}
 
-
-  login(form: NgForm) {
-    const email = form.value.email;
-    const password = form.value.password;
-    console.log('Email:', email, 'Password:', password);
-    this.router.navigate(['/tareas']);
+  registro(){
+    this.router.navigate(['/registro'])
+  }
+  ngOnInit(): void {
+  this.formLogin = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required]),
+  });
+  }
+  
+  public login(): void {
+    if (this.formLogin.valid) {
+      console.log('Formulario enviado:', this.formLogin.value);
+      this.router.navigate(['/tareas']);
+    } else {
+      console.log('Formulario no válido');
+    }
   }
 }

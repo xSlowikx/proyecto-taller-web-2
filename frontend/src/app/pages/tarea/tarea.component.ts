@@ -1,10 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import { TareaDTO_In } from '../../core/models/task/task.model';
+import { TaskDTO_In } from '../../core/models/task/task.model';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { EliminarDialogComponent } from '../../components/eliminar-dialog/eliminar-dialog.component';
+import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
+import { TareaService } from '../../core/services/tarea.service';
 
 @Component({
   selector: 'app-tarea',
@@ -13,7 +16,8 @@ import { MatCheckbox } from '@angular/material/checkbox';
   styleUrls: ['./tarea.component.scss']
 })
 export class TareaComponent implements OnInit {
-  tareas: TareaDTO_In[] = [
+  @Output() refreshEvent = new EventEmitter<void>();
+  tareas: TaskDTO_In[] = [
     {
       id_task: 1,
       title: 'Aprender Angular',
@@ -23,7 +27,8 @@ export class TareaComponent implements OnInit {
       completed_at: null,
       priority_id: 3,
       state_id: null,
-      rowClass: ''
+      rowClass: '',
+      user_id: 0
     },
     {
       id_task: 2,
@@ -34,7 +39,8 @@ export class TareaComponent implements OnInit {
       completed_at: null,
       priority_id: 2,
       state_id: null,
-      rowClass: ''
+      rowClass: '',
+      user_id: 0
     },
     {
       id_task: 3,
@@ -45,15 +51,16 @@ export class TareaComponent implements OnInit {
       completed_at: null,
       priority_id: 1,
       state_id: 1,
-      rowClass: ''
+      rowClass: '',
+      user_id: 0
     }];
   
-  dataSource = new MatTableDataSource<TareaDTO_In>();
+  dataSource = new MatTableDataSource<TaskDTO_In>();
   displayedColumns: string[] = ['estado', 'titulo', 'descripcion', 'prioridad', 'creado',  'acciones'];
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(public dialog: MatDialog, private router: Router) {}
+  constructor(public dialog: MatDialog, private router: Router,  private _tareaServicio: TareaService) {}
 
   ngOnInit() {
     this.dataSource.data = this.tareas.map(task => ({
@@ -73,7 +80,7 @@ export class TareaComponent implements OnInit {
   editar(id: number) {
     this.router.navigate(['/tareas/edit', id]);
   }
-  toggleRow(checked: boolean, element: TareaDTO_In, checkbox: MatCheckbox) {
+  toggleRow(checked: boolean, element: TaskDTO_In, checkbox: MatCheckbox) {
     // Cambiar el estado del elemento
     element.state_id = checked ? 1 : 0;
     
@@ -85,5 +92,34 @@ export class TareaComponent implements OnInit {
     if (row) {
       row.classList.toggle('tachado', checked); // Tacha o destacha la fila según el estado del checkbox
     }
+  }
+
+  openDialog(id: number) {
+    const dialogRef = this.dialog.open(EliminarDialogComponent, {
+      width: '600px',
+      data: {
+        titulo: 'Eliminar Tarea',
+        mensaje:
+          '¿Está seguro que desea eliminar esta tarea? Este cambio es irreversible.',
+      },
+    });
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this._tareaServicio
+          .eliminarTareaById(id)
+          .then((x) => {
+            this.refreshEvent.emit();
+          })
+          .catch((e) => {
+            this.dialog.open(ErrorDialogComponent, {
+              width: '600px',
+              data: {
+                titulo: 'Atención',
+                mensaje: e,
+              },
+            });
+          });
+      }
+    });
   }
 }

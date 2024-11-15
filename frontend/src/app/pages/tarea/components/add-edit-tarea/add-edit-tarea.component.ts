@@ -6,15 +6,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { SelectDTO_In } from '../../../../core/models/select/select.model';
+import { StateDTO_In } from '../../../../core/models/state/state.model';
 import { TareaService } from '../../../../core/services/tarea.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TareaDTO_Out } from '../../../../core/models/task/task.model';
+import { TaskDTO_Out } from '../../../../core/models/task/task.model';
 import { ErrorDialogComponent } from '../../../../components/error-dialog/error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../../../material.module';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../../../header/header.component';
+import { PriorityDTO_In } from '../../../../core/models/priority/priority.model';
 
 @Component({
   selector: 'app-add-edit-tarea',
@@ -33,8 +34,8 @@ export class AddEditTareaComponent implements OnInit {
   editMode: boolean = false;
   title: string = 'Crear tarea';
   formTarea!: FormGroup;
-  prioridades: SelectDTO_In[] = [];
-  filteredPrioridades: SelectDTO_In[] = [];
+  prioridades: PriorityDTO_In[] = [];
+  filteredPrioridades: PriorityDTO_In[] = [];
 
   constructor(
     public dialog: MatDialog,
@@ -103,14 +104,19 @@ export class AddEditTareaComponent implements OnInit {
     }
   }
 
-  private mapearTarea(): TareaDTO_Out {
-    let tarea: TareaDTO_Out = {
+  private mapearTarea(): TaskDTO_Out {
+    let tarea: TaskDTO_Out = {
       id_task: this.id ?? 0,
       title: this.formTarea.get('titulo')?.value.toString() ?? '',
       description: this.formTarea.get('descripcion')?.value.toString() ?? '',
       user_id: this.user, // ver cómo traerlo
       priority_id: this.formTarea.get('prioridad')?.value.toString() ?? '',
       state_id: null // En back se modifica
+      ,
+      created_at: '',
+      modified_at: null,
+      completed_at: null,
+      rowClass: undefined
     };
     return tarea;
   }

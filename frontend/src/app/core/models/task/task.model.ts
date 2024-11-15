@@ -8,6 +8,7 @@ export interface TaskDTO_In {
   user_id: number;
   priority_id: number;
   state_id: number | null;
+  rowClass: string;
 }
 
 export class TaskDTO_Out {
@@ -20,4 +21,5 @@ export class TaskDTO_Out {
   user_id: number = 0;
   priority_id: number = 0;
   state_id: number | null = 0;
+  rowClass: string | undefined;
 }

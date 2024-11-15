@@ -57,9 +57,9 @@
               ></mat-option>
               <mat-option
                 *ngFor="let prioridad of filteredPrioridades"
-                [value]="prioridad.id"
+                [value]="prioridad.id_priority"
               >
-                {{ prioridad.description }}
+                {{ prioridad.value }}
               </mat-option>
             </mat-select>
             <mat-error class="mat-error">{{
