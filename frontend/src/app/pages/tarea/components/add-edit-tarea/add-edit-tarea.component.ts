@@ -9,7 +9,7 @@ import {
 import { SelectDTO_In } from '../../../../core/models/select/select.model';
 import { TareaService } from '../../../../core/services/tarea.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TareaDTO_Out } from '../../../../core/models/tarea/tarea.model';
+import { TareaDTO_Out } from '../../../../core/models/task/task.model';
 import { ErrorDialogComponent } from '../../../../components/error-dialog/error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../../../material.module';

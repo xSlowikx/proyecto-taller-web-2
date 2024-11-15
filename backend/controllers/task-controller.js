@@ -1,7 +1,7 @@
 const { NVarChar } = require("mssql");
 const { sql, poolPromise } = require("../config/db-connection");
 
-const getTasks = async (req, res) => {
+const getAllTasks = async (req, res) => {
   try {
     const userId = req.session.user.id; // Obtener el ID del usuario autenticado
 
@@ -21,7 +21,7 @@ const getTasks = async (req, res) => {
   }
 };
 
-const taskDetail = async (req, res) => {
+const getDetail = async (req, res) => {
   try {
     const taskId = req.params.id;
 
@@ -45,48 +45,66 @@ const taskDetail = async (req, res) => {
 };
 
 const createTask = async (req, res) => {
-    try {
-        const { title, description, status, priority } = req.body; // Datos recibidos del cliente
-        const pool = await poolPromise; // Conexión a la base de datos
-
-        const result = await pool
-            .request()
-            .input("title", sql.NVarChar, title)
-            .input("description", sql.NVarChar, description) // Corrección en el tipo de dato
-            .input("status", sql.Int, status)
-            .input("priority", sql.Int, priority)
-            .query(`
-                INSERT INTO task (title, description, status, priority)
-                VALUES (@title, @description, @status, @priority);
-                SELECT SCOPE_IDENTITY() AS taskId;
-            `);
-
-        const taskId = result.recordset[0].taskId; // Obtener el ID del task recién creado
-        res.status(201).json({ message: 'Task created successfully', taskId });
-    } catch (err) {
-        console.error('Error creating task:', err);
-        res.status(500).json({ error: 'Something went wrong while creating the task' });
-    }
-};
-
-
-const updateTask = async (req, res) => {
   try {
-    const taskId = req.params.id; // Capturar el ID dinámico
-    const { title, description, status, priority } = req.body; // Capturar los datos del body
+    const { title, description, priority } = req.body;
+    const userId = req.session.user.id;
     const pool = await poolPromise;
 
     const result = await pool
+      .request()
+      .input("title", sql.NVarChar, title)
+      .input("description", sql.NVarChar, description)
+      .input("priority", sql.Int, priority)
+      .input("userId", sql.Int, userId).query(`
+                INSERT INTO task (title, description, priority_id, user_id)
+                VALUES (@title, @description, @priority, @userId);
+                SELECT SCOPE_IDENTITY() AS taskId;
+            `);
+    const taskId = result.recordset[0].taskId;
+    res.status(201).json({ message: "Task created successfully", taskId });
+  } catch (err) {
+    console.error("Error creating task:", err);
+    res
+      .status(500)
+      .json({ error: "Something went wrong while creating the task" });
+  }
+};
+
+const updateTask = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const { title, description, status, priority } = req.body;
+    const pool = await poolPromise;
+
+    let query = `
+      UPDATE task
+      SET title = @title, 
+          description = @description, 
+          state_id = @status, 
+          priority_id = @priority, 
+          modified_at = @modified_at
+    `;
+
+    if (status === 4) {
+      query += `, completed_at = @completed_at`;
+    }
+
+    query += ` WHERE id_task = @id`;
+
+    const request = pool
       .request()
       .input("id", sql.Int, taskId)
       .input("title", sql.NVarChar, title)
       .input("description", sql.NVarChar, description)
       .input("status", sql.Int, status)
-      .input("priority", sql.Int, priority).query(`
-                UPDATE tasks
-                SET title = @title, description = @description, status = @status, priority = @priority
-                WHERE id_task = @id
-            `);
+      .input("modified_at", sql.DateTime, new Date())
+      .input("priority", sql.Int, priority);
+
+    if (status === 4) {
+      request.input("completed_at", sql.DateTime, new Date());
+    }
+
+    const result = await request.query(query);
 
     if (result.rowsAffected[0] === 0) {
       return res
@@ -103,24 +121,54 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
-    const taskId = req.params.id;
+    const taskId = req.params.id; // Capturar ID de la tarea
+    const userId = req.session.user?.id; // Capturar ID del usuario autenticado desde la sesión
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" }); // Si no hay sesión activa
+    }
+
     const pool = await poolPromise;
 
-    const result = await pool.request().input("id", sql.Int, taskId).query(`
-                UPDATE task
-                SET status = 5 WHERE id = @id
-            `);
+    // Verificar que la tarea pertenece al usuario autenticado
+    const ownerCheck = await pool.request()
+      .input("id", sql.Int, taskId)
+      .input("userId", sql.Int, userId)
+      .query(`
+        SELECT id_task 
+        FROM task 
+        WHERE id_task = @id AND user_id = @userId
+      `);
+
+    if (ownerCheck.recordset.length === 0) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to delete this task" });
+    }
+
+    // Actualizar estado de la tarea a "eliminada" (state_id = 5)
+    const result = await pool.request()
+      .input("id", sql.Int, taskId)
+      .input("status", sql.Int, 5) // Estado de eliminado
+      .input("modified_at", sql.DateTime, new Date())
+      .query(`
+        UPDATE task
+        SET state_id = @status, modified_at = @modified_at
+        WHERE id_task = @id
+      `);
+
     if (result.rowsAffected[0] === 0) {
       return res
         .status(404)
         .json({ message: "Task not found or no changes made" });
     }
 
-    res.status(200).json({ message: "Task updated successfully" });
+    res.status(200).json({ message: "Task deleted successfully" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to update task" });
+    res.status(500).json({ error: "Failed to delete task" });
   }
 };
 
-module.exports = { getTasks, createTask, taskDetail, updateTask, deleteTask };
+
+module.exports = { getAllTasks, createTask, getDetail, updateTask, deleteTask };
