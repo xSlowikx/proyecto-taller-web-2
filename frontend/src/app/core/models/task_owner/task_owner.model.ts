@@ -1,9 +1,9 @@
 export interface TaskOwnerDTO_In {
-    id_user: number;
-    nombre: string;
-    apellido: string;
-    username: string;
-    password: string;
+    id_user: number | null;
+    nombre: string | null;
+    apellido: string | null;
+    username: string | null;
+    password: string | null;
   }
   
   export class TaskOwnerDTO_Out {

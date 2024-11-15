@@ -9,6 +9,7 @@ import { ENVIRONMENT } from '../../../environments/environment';
 import { ENDPOINTS } from '../constants/endpoints';
 import { map } from 'rxjs';
 import { TaskDTO_In, TaskDTO_Out } from '../models/task/task.model';
+import { TaskOwnerDTO_In } from '../models/task_owner/task_owner.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,19 +23,50 @@ export class TareaService extends ApiGenericService {
     super(httpClient, ENVIRONMENT.API_URL, ENDPOINTS.TAREA);
   }
 
-  async getAllTareas(): Promise<TaskDTO_In[]> { // ok
-    return await this.apiService
-      .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_ALL)
-      .pipe(
-        map((response) => {
-          if (response) {
-            return response;
-          }
-          return null;
-        })
-      )
-      .toPromise();
+  async getAllTareas(): Promise<TaskDTO_In[]> {
+    try {
+      // Primero, realiza el login utilizando fetch
+      const loginResponse = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: 'elolina',
+          password: 'elo123',
+        }),
+      });
+  
+      // Verifica si el login fue exitoso
+      if (!loginResponse.ok) {
+        console.log('Login failed');
+        return []; // O manejar el error de login como corresponda
+      }
+  
+      const loginData = await loginResponse.json();
+      console.log('Login successful:', loginData);
+  
+      // Si el login es exitoso, procede a obtener las tareas
+      const tasksResponse = await this.apiService
+        .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_ALL)
+        .pipe(
+          map((response) => {
+            if (response) {
+              return response;
+            }
+            return null;
+          })
+        )
+        .toPromise();
+  
+      return tasksResponse;
+  
+    } catch (error) {
+      console.error('Error during login or fetching tasks:', error);
+      return []; // Retorna un array vacío en caso de error
+    }
   }
+  
 
   //ok
   async taskDetail(id: number): Promise<TaskDTO_In> { // para el edit o el ver tarea

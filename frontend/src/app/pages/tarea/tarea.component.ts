@@ -1,19 +1,20 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import { TareaDTO_In } from '../../core/models/task/task.model';
+import { TaskDTO_In } from '../../core/models/task/task.model';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { TareaService } from '../../core/services/tarea.service';
 
 @Component({
   selector: 'app-tarea',
   templateUrl: './tarea.component.html',
   standalone: false,
-  styleUrls: ['./tarea.component.scss']
+  styleUrls: ['./tarea.component.scss'],
 })
 export class TareaComponent implements OnInit {
-  tareas: TareaDTO_In[] = [
+  /*tareas: TareaDTO_In[] = [
     {
       id_task: 1,
       title: 'Aprender Angular',
@@ -47,18 +48,33 @@ export class TareaComponent implements OnInit {
       state_id: 1,
       rowClass: ''
     }];
-  
-  dataSource = new MatTableDataSource<TareaDTO_In>();
-  displayedColumns: string[] = ['estado', 'titulo', 'descripcion', 'prioridad', 'creado',  'acciones'];
-  
+  */
+
+  tasks: TaskDTO_In[] = [];
+  dataSource = new MatTableDataSource<TaskDTO_In>();
+  displayedColumns: string[] = [
+    'estado',
+    'titulo',
+    'descripcion',
+    'prioridad',
+    'creado',
+    'acciones',
+  ];
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(public dialog: MatDialog, private router: Router) {}
+  constructor(
+    public dialog: MatDialog, 
+    private router: Router,
+    private _tasksService: TareaService
+  ) {}
 
   ngOnInit() {
-    this.dataSource.data = this.tareas.map(task => ({
+    this.obtenerDatos();
+    console.log('hola' + this.tasks)
+    this.dataSource.data = this.tasks.map((task) => ({
       ...task,
-      rowClass: task.state_id === 1 ? 'tachado' : ''
+      rowClass: task.state_id === 1 ? 'tachado' : '',
     }));
   }
 
@@ -67,19 +83,23 @@ export class TareaComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  async obtenerDatos(){
+    this.tasks = await this._tasksService.getAllTareas();
+  }
+
   createTask() {
     // Implementation for creating a task
   }
   editar(id: number) {
     this.router.navigate(['/tareas/edit', id]);
   }
-  toggleRow(checked: boolean, element: TareaDTO_In, checkbox: MatCheckbox) {
+  toggleRow(checked: boolean, element: TaskDTO_In, checkbox: MatCheckbox) {
     // Cambiar el estado del elemento
     element.state_id = checked ? 1 : 0;
-    
+
     // Cambiar la clase de la fila según el estado
-    element.rowClass = element.state_id === 1 ? 'tachado' : '';
-    
+    //element.rowClass = element.state_id === 1 ? 'tachado' : '';
+
     // Obtener la fila más cercana y alternar la clase 'tachado'
     const row = checkbox._elementRef.nativeElement.closest('tr'); // Usamos nativeElement para acceder al tr
     if (row) {
