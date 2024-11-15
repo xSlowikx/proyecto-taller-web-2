@@ -1,21 +1,28 @@
+.container-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .cardWithShadow {
-    background-color: #a0caba;
+    background-color: #f3ebde;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     color:  rgb(84, 52, 32);;
     font-family: "Poppins";
+    
   }
   
 .titulo{
  font-family: Nunito;   
  font-size: 2.5em;
- font-weight: 500;
+ font-weight: 700;
  padding: 0.2em;
 }
 
   .theme-card {
     .mat-card-header {
-      background-color: #a0caba;
+      background-color: #f3ebde;
       color:   rgb(84, 52, 32);;
       padding: 12px;
       
@@ -103,3 +110,35 @@
       }
     }
   }
+
+  .actions-container {
+  display: flex;
+  justify-content: space-between; 
+  padding-top: 16px;
+}
+
+.cancel-button {
+  background-color: rgba(78, 67, 61, 0.748) !important;
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  padding: 8px 16px;
+  transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+  background-color: rgba(78, 67, 61, 1); 
+}
+
+.save-button {
+  background-color: #47bd90 !important;
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  padding: 8px 16px;
+  transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+  background-color: #5a8a7a; 
+}

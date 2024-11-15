@@ -14,6 +14,7 @@ import { ErrorDialogComponent } from '../../../../components/error-dialog/error-
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../../../material.module';
 import { CommonModule } from '@angular/common';
+import { HeaderComponent } from '../../../header/header.component';
 
 @Component({
   selector: 'app-add-edit-tarea',
@@ -23,7 +24,8 @@ import { CommonModule } from '@angular/common';
   imports:[MaterialModule,
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,]
+    ReactiveFormsModule
+  ],
 })
 export class AddEditTareaComponent implements OnInit {
   id: number = 0;

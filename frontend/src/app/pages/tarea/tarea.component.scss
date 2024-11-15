@@ -1,14 +1,14 @@
 .fondo{
-    background-color: rgba(64, 30, 15, 0.66);
+    background-color: #f3ebde;
 }
 
 .fondo2{
-    background-color: rgba(64, 30, 15, 0.062);
+    background-color: #f3ebde;
 }
 
 .text-left, .text-center{
     font-family: Poppins;
-    color:#f2e6d0;
+    color:#674637;
 }
 
 .titulo{
@@ -34,8 +34,8 @@
 }
 
 .fondo-abajo{
-    background-color: rgba(64, 30, 15, 0.062);
-    color:#f2e6d0;
+    background-color: #f3ebde;
+    color:#674637;
     font-family: Poppins;
     font-size: 13px;
 }
@@ -43,10 +43,10 @@
 
 .tachado {
     text-decoration: line-through;
-    background-color: rgba(78, 67, 61, 0.748);
+    background-color: #d7c9ae;
     color: #000000;
     .text-center, .text-left{
-        color:rgba(162, 140, 128, 0.748);
+        color:rgba(162, 140, 128, 0.92);
 }
     
 }
