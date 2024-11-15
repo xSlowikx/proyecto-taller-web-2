@@ -11,4 +11,10 @@ export const ENDPOINTS = {
   AUTH: 'auth',
   AUTH_LOGIN: 'auth/login',
   AUTH_SESSION_STATUS: 'auth/session-status',
+
+  // Pririty
+  PRIORITY: 'priority',
+
+  // State
+  STATE: 'state',
 };

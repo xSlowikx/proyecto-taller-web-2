@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import { TareaDTO_In } from '../../core/models/tarea/tarea.model';
+import { TareaDTO_In } from '../../core/models/task/task.model';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MatCheckbox } from '@angular/material/checkbox';

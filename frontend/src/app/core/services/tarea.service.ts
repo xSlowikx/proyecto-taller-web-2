@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { ENVIRONMENT } from '../../../environments/environment';
 import { ENDPOINTS } from '../constants/endpoints';
 import { map } from 'rxjs';
-import { TareaDTO_In, TareaTablaDTO_In, TareaDTO_Out } from '../models/tarea/tarea.model';
+import { TaskDTO_In, TaskDTO_Out } from '../models/task/task.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,7 @@ export class TareaService extends ApiGenericService {
     super(httpClient, ENVIRONMENT.API_URL, ENDPOINTS.TAREA);
   }
 
-  async getAllTareas(): Promise<TareaTablaDTO_In[]> { // ok
+  async getAllTareas(): Promise<TaskDTO_In[]> { // ok
     return await this.apiService
       .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_ALL)
       .pipe(
@@ -37,7 +37,7 @@ export class TareaService extends ApiGenericService {
   }
 
   //ok
-  async taskDetail(id: number): Promise<TareaDTO_In> { // para el edit o el ver tarea
+  async taskDetail(id: number): Promise<TaskDTO_In> { // para el edit o el ver tarea
     return await this.apiService
       .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_DETAIL, id.toString())
       .pipe(
@@ -56,15 +56,14 @@ export class TareaService extends ApiGenericService {
     return await this.httpClient.put<void>(url, {}).toPromise();
   }
 
-  async updateTask(tarea: TareaDTO_Out): Promise<any> {
+  async updateTask(tarea: TaskDTO_Out): Promise<any> {
     const data = this.generarFormDataCrear(tarea);
     return await this.apiMultiPartService
       .put<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_UPDATE, data)
       .toPromise();
   }
   
-
-  async creatTask(tarea: TareaDTO_Out): Promise<any> {
+  async creatTask(tarea: TaskDTO_Out): Promise<any> {
     var data = this.generarFormDataCrear(tarea);
     return await this.apiMultiPartService
       .post<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_CREATE, data)
@@ -79,7 +78,7 @@ export class TareaService extends ApiGenericService {
       .toPromise();
   }
 
-  generarFormDataCrear(tarea: TareaDTO_Out) {
+  generarFormDataCrear(tarea: TaskDTO_Out) {
     var formData = new FormData();
 
     formData.append( // entre '' es como se llama en el back. - modificar.
