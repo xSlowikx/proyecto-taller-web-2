@@ -39,12 +39,27 @@ export class TareaService extends ApiGenericService {
     }
   }*/
 
+
     getTasks() {
-      return this.httpClient.get<TaskDTO_In[]>(
+      return this.httpClient.get<any[]>(
         `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_ALL}`,
-        { withCredentials: true } // Agregar cookies
+        { withCredentials: true }
+      ).pipe(
+        map((tasks: any[]) => tasks.map(task => new TaskDTO_In(
+          task.id_task,
+          task.title,
+          task.description,
+          task.created_at,
+          task.modified_at,
+          task.completed_at,
+          task.user_id,
+          task.priority_id,
+          task.state_id
+        )))
       );
     }
+    
+
     
   
 

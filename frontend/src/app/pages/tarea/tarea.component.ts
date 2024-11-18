@@ -8,6 +8,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { EliminarDialogComponent } from '../../components/eliminar-dialog/eliminar-dialog.component';
 import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
 import { TareaService } from '../../core/services/tarea.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-tarea',
@@ -17,53 +18,19 @@ import { TareaService } from '../../core/services/tarea.service';
 })
 export class TareaComponent implements OnInit {
   @Output() refreshEvent = new EventEmitter<void>();
-  tareas: TaskDTO_In[] = [
-    {
-      id_task: 1,
-      title: 'Aprender Angular',
-      description: 'Dedicarle unas 4 horas al día para aprender Angular',
-      created_at: '2024-11-09T14:51:28.740Z',
-      modified_at: null,
-      completed_at: null,
-      priority_id: 3,
-      state_id: null,
-      rowClass: '',
-      user_id: 0
-    },
-    {
-      id_task: 2,
-      title: 'Practicar TypeScript',
-      description: 'Repasar los conceptos básicos de TypeScript y sus tipos',
-      created_at: '2024-11-08T10:30:00.000Z',
-      modified_at: '2024-11-08T12:00:00.000Z',
-      completed_at: null,
-      priority_id: 2,
-      state_id: null,
-      rowClass: '',
-      user_id: 0
-    },
-    {
-      id_task: 3,
-      title: 'Desarrollar un componente en Angular',
-      description: 'Crear un componente simple de lista de tareas',
-      created_at: '2024-11-07T09:00:00.000Z',
-      modified_at: null,
-      completed_at: null,
-      priority_id: 1,
-      state_id: 1,
-      rowClass: '',
-      user_id: 0
-    }];
-  
+ 
+    tasks: TaskDTO_In[] = []
   dataSource = new MatTableDataSource<TaskDTO_In>();
   displayedColumns: string[] = ['estado', 'titulo', 'descripcion', 'prioridad', 'creado',  'acciones'];
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(public dialog: MatDialog, private router: Router,  private _tareaServicio: TareaService) {}
+  constructor(public dialog: MatDialog, private router: Router,  private _tareaService: TareaService) {}
 
-  ngOnInit() {
-    this.dataSource.data = this.tareas.map(task => ({
+  async ngOnInit() {
+    await this.obtenerDatos();
+    console.log('hola' + this.tasks)
+    this.dataSource.data = this.tasks.map((task) => ({
       ...task,
       rowClass: task.state_id === 1 ? 'tachado' : ''
     }));
@@ -73,6 +40,28 @@ export class TareaComponent implements OnInit {
     // Set the paginator after the view is initialized
     this.dataSource.paginator = this.paginator;
   }
+
+  async obtenerDatos() {
+    try {
+      const response = await firstValueFrom(this._tareaService.getTasks());
+      this.tasks = response.map(task => ({
+        id_task: task.id_task,
+        title: task.title,
+        description: task.description,
+        created_at: task.created_at,
+        modified_at: task.modified_at,
+        completed_at: task.completed_at,
+        user_id: task.user_id,
+        priority_id: task.priority_id,
+        state_id: task.state_id,
+      }));
+      console.log('Tasks transformadas:', this.tasks);
+    } catch (error) {
+      console.error('Error al obtener tasks:', error);
+    }
+  }
+  
+  
 
   createTask() {
     // Implementation for creating a task
@@ -85,7 +74,7 @@ export class TareaComponent implements OnInit {
     element.state_id = checked ? 1 : 0;
     
     // Cambiar la clase de la fila según el estado
-    element.rowClass = element.state_id === 1 ? 'tachado' : '';
+    //element.rowClass = element.state_id === 1 ? 'tachado' : '';
     
     // Obtener la fila más cercana y alternar la clase 'tachado'
     const row = checkbox._elementRef.nativeElement.closest('tr'); // Usamos nativeElement para acceder al tr
@@ -105,7 +94,7 @@ export class TareaComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((res) => {
       if (res) {
-        this._tareaServicio
+        this._tareaService
           .eliminarTareaById(id)
           .then((x) => {
             this.refreshEvent.emit();

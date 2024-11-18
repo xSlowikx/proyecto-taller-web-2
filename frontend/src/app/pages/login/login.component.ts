@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms'; 
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms'; 
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class LoginComponent {
   formLogin!: FormGroup;
-  constructor(private router: Router) {}
+  constructor(private router: Router, private _authService: AuthService) {}
 
   registro(){
     this.router.navigate(['/registro'])
