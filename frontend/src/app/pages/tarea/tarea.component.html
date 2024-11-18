@@ -59,7 +59,7 @@
             <button class="btn-accion" mat-icon-button (click)="editar(element.id_task)">
               <mat-icon>edit</mat-icon>
             </button>
-            <button class="btn-accion">
+            <button class="btn-accion" (click)="openDialog(element.id)">
               <mat-icon>delete</mat-icon>
             </button>
           </td>

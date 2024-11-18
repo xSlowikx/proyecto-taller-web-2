@@ -18,7 +18,8 @@ export class TareaService extends ApiGenericService {
   constructor(
     private httpClient: HttpClient,
     private apiService: ApiService,
-    private apiMultiPartService: ApiMultipartService
+    private apiMultiPartService: ApiMultipartService,
+   
   ) {
     super(httpClient, ENVIRONMENT.API_URL, ENDPOINTS.TAREA);
   }

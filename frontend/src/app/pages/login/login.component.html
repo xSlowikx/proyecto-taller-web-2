@@ -2,21 +2,20 @@
     <div class="bienvenido p-4">
         <h2>¡Bienvenido!</h2>
         <h3>Si aún no tenes cuenta, haz click abajo</h3>
-        <button type="button" class="btn btn-registrate p-2 ">Registrate</button>
+        <button type="button" class="btn btn-registrate p-2" (click)="registro()">Registrate</button>
     </div>
 
     <div class="login-form">
         <h2>Iniciar sesión</h2>
         <div class="form">
-            <form #formulario="ngForm" (ngSubmit)="login(formulario)">
-                <div>
-                    <input type="text" id="username" name="username" ngModel required placeholder="Username">
-                </div>
-                <div>
-                    <input type="password" id="password" name="password" ngModel required placeholder="Contraseña">
-                </div>
-                <button type="submit" class="btn btn-ingresar px-5 py-2">Ingresar</button>
-            </form>
+          <form [formGroup]="formLogin" (ngSubmit)="login()">
+            <div>
+              <input type="text" id="username" formControlName="username" placeholder="Usuario" />
+            </div>
+            <div>
+              <input type="password" id="password" formControlName="password" placeholder="Contraseña" />
+            </div>
+            <button type="submit" class="btn btn-ingresar px-5 py-2">Ingresar</button>
+          </form>
         </div>
-    </div>
-</section>
+      </div>

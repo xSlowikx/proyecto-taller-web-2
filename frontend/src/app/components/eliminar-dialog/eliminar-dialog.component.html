@@ -1,0 +1,10 @@
+<h5 mat-dialog-title class="mat-subtitle-1">{{data.titulo}}</h5>
+<div mat-dialog-content class="mat-subtitle-2 lh-16">
+  {{data.mensaje}}
+</div>
+<div mat-dialog-actions class="p-24 p-t-0 d-flex justify-content-end">
+  <button mat-stroked-button color="warn" mat-dialog-close (click)="onNoClick()">No</button>
+  <button mat-flat-button color="primary" mat-dialog-close [mat-dialog-close]="true"  cdkFocusInitial>
+    Si
+  </button>
+</div>

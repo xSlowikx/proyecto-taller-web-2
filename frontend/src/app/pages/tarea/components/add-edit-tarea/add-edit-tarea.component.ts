@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { StateDTO_In } from '../../../../core/models/state/state.model';
 import { TareaService } from '../../../../core/services/tarea.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TaskDTO_Out } from '../../../../core/models/task/task.model';
@@ -13,6 +14,7 @@ import { ErrorDialogComponent } from '../../../../components/error-dialog/error-
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../../../material.module';
 import { CommonModule } from '@angular/common';
+import { HeaderComponent } from '../../../header/header.component';
 import { PriorityDTO_In } from '../../../../core/models/priority/priority.model';
 
 @Component({
@@ -23,7 +25,8 @@ import { PriorityDTO_In } from '../../../../core/models/priority/priority.model'
   imports:[MaterialModule,
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,]
+    ReactiveFormsModule
+  ],
 })
 export class AddEditTareaComponent implements OnInit {
   id: number = 0;
@@ -106,12 +109,14 @@ export class AddEditTareaComponent implements OnInit {
       id_task: this.id ?? 0,
       title: this.formTarea.get('titulo')?.value.toString() ?? '',
       description: this.formTarea.get('descripcion')?.value.toString() ?? '',
-      user_id: this.user,
+      user_id: this.user, // ver cómo traerlo
       priority_id: this.formTarea.get('prioridad')?.value.toString() ?? '',
-      state_id: null,
-      created_at: new Date().toString(),
-      modified_at: new Date().toString(),
-      completed_at: new Date().toString()
+      state_id: null // En back se modifica
+      ,
+      created_at: '',
+      modified_at: null,
+      completed_at: null,
+      rowClass: undefined
     };
     return tarea;
   }

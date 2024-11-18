@@ -17,30 +17,36 @@ import { TareaModule } from './pages/tarea/tarea.module';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { LoginModule } from './pages/login/login.module';
+import { EliminarDialogComponent } from './components/eliminar-dialog/eliminar-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
+import { RegistroComponent } from './pages/registro/registro.component';
 @NgModule({
   declarations: [
     AppComponent,
     TareaComponent,
-    HeaderComponent,
-   
+    HeaderComponent
+    
   ],
   imports: [
     TareaModule,
     BrowserModule,
-    BrowserAnimationsModule, // Add BrowserAnimationsModule
+    BrowserAnimationsModule, 
     AppRoutingModule,
     MatToolbarModule,
     MatCardModule,
-    MatTableModule, // Add MatTableModule here
-    MatPaginatorModule, // Optional
-    MatSortModule, // Optional
+    MatTableModule,
+    MatPaginatorModule, 
+    MatSortModule, 
     MatIconModule,
     AddEditTareaComponent,
     HttpClientModule,
     MatCheckbox,
     LoginModule,
     LoginComponent,
-    
+    MatButtonModule,
+    EliminarDialogComponent,
+    RegistroComponent
+   
   ],
   providers: [],
   bootstrap: [AppComponent]

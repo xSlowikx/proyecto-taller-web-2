@@ -1,20 +1,23 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { TaskDTO_In } from '../../core/models/task/task.model';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { EliminarDialogComponent } from '../../components/eliminar-dialog/eliminar-dialog.component';
+import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
 import { TareaService } from '../../core/services/tarea.service';
 
 @Component({
   selector: 'app-tarea',
   templateUrl: './tarea.component.html',
   standalone: false,
-  styleUrls: ['./tarea.component.scss'],
+  styleUrls: ['./tarea.component.scss']
 })
 export class TareaComponent implements OnInit {
-  /*tareas: TareaDTO_In[] = [
+  @Output() refreshEvent = new EventEmitter<void>();
+  tareas: TaskDTO_In[] = [
     {
       id_task: 1,
       title: 'Aprender Angular',
@@ -24,7 +27,8 @@ export class TareaComponent implements OnInit {
       completed_at: null,
       priority_id: 3,
       state_id: null,
-      rowClass: ''
+      rowClass: '',
+      user_id: 0
     },
     {
       id_task: 2,
@@ -35,7 +39,8 @@ export class TareaComponent implements OnInit {
       completed_at: null,
       priority_id: 2,
       state_id: null,
-      rowClass: ''
+      rowClass: '',
+      user_id: 0
     },
     {
       id_task: 3,
@@ -46,35 +51,21 @@ export class TareaComponent implements OnInit {
       completed_at: null,
       priority_id: 1,
       state_id: 1,
-      rowClass: ''
+      rowClass: '',
+      user_id: 0
     }];
-  */
-
-  tasks: TaskDTO_In[] = [];
+  
   dataSource = new MatTableDataSource<TaskDTO_In>();
-  displayedColumns: string[] = [
-    'estado',
-    'titulo',
-    'descripcion',
-    'prioridad',
-    'creado',
-    'acciones',
-  ];
-
+  displayedColumns: string[] = ['estado', 'titulo', 'descripcion', 'prioridad', 'creado',  'acciones'];
+  
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(
-    public dialog: MatDialog, 
-    private router: Router,
-    private _tasksService: TareaService
-  ) {}
+  constructor(public dialog: MatDialog, private router: Router,  private _tareaServicio: TareaService) {}
 
   ngOnInit() {
-    this.obtenerDatos();
-    console.log('hola' + this.tasks)
-    this.dataSource.data = this.tasks.map((task) => ({
+    this.dataSource.data = this.tareas.map(task => ({
       ...task,
-      rowClass: task.state_id === 1 ? 'tachado' : '',
+      rowClass: task.state_id === 1 ? 'tachado' : ''
     }));
   }
 
@@ -82,18 +73,6 @@ export class TareaComponent implements OnInit {
     // Set the paginator after the view is initialized
     this.dataSource.paginator = this.paginator;
   }
-
-  async obtenerDatos() {
-    this._tasksService.getTasks().subscribe(
-      (data: TaskDTO_In[]) => {
-        this.tasks = data; // Asignar los datos al array
-      },
-      (error) => {
-        console.error('Error al obtener tareas:', error);
-      }
-    );
-  }
-  
 
   createTask() {
     // Implementation for creating a task
@@ -104,14 +83,43 @@ export class TareaComponent implements OnInit {
   toggleRow(checked: boolean, element: TaskDTO_In, checkbox: MatCheckbox) {
     // Cambiar el estado del elemento
     element.state_id = checked ? 1 : 0;
-
+    
     // Cambiar la clase de la fila según el estado
-    //element.rowClass = element.state_id === 1 ? 'tachado' : '';
-
+    element.rowClass = element.state_id === 1 ? 'tachado' : '';
+    
     // Obtener la fila más cercana y alternar la clase 'tachado'
     const row = checkbox._elementRef.nativeElement.closest('tr'); // Usamos nativeElement para acceder al tr
     if (row) {
       row.classList.toggle('tachado', checked); // Tacha o destacha la fila según el estado del checkbox
     }
+  }
+
+  openDialog(id: number) {
+    const dialogRef = this.dialog.open(EliminarDialogComponent, {
+      width: '600px',
+      data: {
+        titulo: 'Eliminar Tarea',
+        mensaje:
+          '¿Está seguro que desea eliminar esta tarea? Este cambio es irreversible.',
+      },
+    });
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this._tareaServicio
+          .eliminarTareaById(id)
+          .then((x) => {
+            this.refreshEvent.emit();
+          })
+          .catch((e) => {
+            this.dialog.open(ErrorDialogComponent, {
+              width: '600px',
+              data: {
+                titulo: 'Atención',
+                mensaje: e,
+              },
+            });
+          });
+      }
+    });
   }
 }

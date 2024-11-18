@@ -18,4 +18,11 @@ export class HeaderComponent {
       });
     }
   
+    agregar(){
+      this.router.navigate(['/tareas/add']);
+    }
+    
+    cerrarSesion(){
+      this.router.navigate(['/login'])
+    }
 }
