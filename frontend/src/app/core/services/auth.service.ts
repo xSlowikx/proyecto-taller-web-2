@@ -8,7 +8,7 @@ import {
 import { ENVIRONMENT } from '../../../environments/environment';
 import { ENDPOINTS } from '../constants/endpoints';
 import { map } from 'rxjs';
-import { TaskOwnerDTO_In, TaskOwnerDTO_Out } from '../models/task_owner/task_owner.model';
+import { TaskOwnerDTO_In, TaskOwnerDTO_Out, TaskOwnerLoginDTO_Out } from '../models/task_owner/task_owner.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +23,7 @@ export class AuthService extends ApiGenericService {
   }
 
   async login(
-    credentials: TaskOwnerDTO_Out
+    credentials: TaskOwnerLoginDTO_Out
   ): Promise<TaskOwnerDTO_In | null | undefined> {
     return await this.apiService
       .post<TaskOwnerDTO_In>(

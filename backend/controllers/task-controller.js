@@ -3,14 +3,14 @@ const { sql, poolPromise } = require("../config/db-connection");
 
 const getAllTasks = async (req, res) => {
   try {
-    const userId = req.session.user.id; // Obtener el ID del usuario autenticado
+    // to do
+    //const userId = req.session.user.id; // Obtener el ID del usuario autenticado
 
     // Consulta para obtener tareas específicas del usuario
     const pool = await poolPromise;
     const result = await pool
       .request()
-      .input("userId", sql.Int, userId)
-      .query("SELECT * FROM task WHERE user_id = @userId");
+      .query("SELECT * FROM task");
 
     res.status(200).json(result.recordset);
   } catch (err) {

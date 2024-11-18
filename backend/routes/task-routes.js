@@ -4,7 +4,7 @@ const { getAllTasks, createTask, getDetail, updateTask, deleteTask } = require('
 const router = express.Router();
 
 // Rutas protegidas
-router.get('/all', isAuthenticated, getAllTasks);
+router.get('/all', getAllTasks);
 router.get('/get-detail/:id', isAuthenticated, getDetail);
 router.post('/create', isAuthenticated, createTask);
 router.post('/update/:id', isAuthenticated, updateTask);

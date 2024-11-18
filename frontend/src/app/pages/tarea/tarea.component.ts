@@ -83,9 +83,17 @@ export class TareaComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  async obtenerDatos(){
-    this.tasks = await this._tasksService.getAllTareas();
+  async obtenerDatos() {
+    this._tasksService.getTasks().subscribe(
+      (data: TaskDTO_In[]) => {
+        this.tasks = data; // Asignar los datos al array
+      },
+      (error) => {
+        console.error('Error al obtener tareas:', error);
+      }
+    );
   }
+  
 
   createTask() {
     // Implementation for creating a task

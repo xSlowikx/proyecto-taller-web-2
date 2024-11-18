@@ -13,3 +13,8 @@ export interface TaskOwnerDTO_In {
     username: string = '';
     password: string = '';
   }
+
+  export class TaskOwnerLoginDTO_Out{
+    username: string = '';
+    password: string = '';
+  }

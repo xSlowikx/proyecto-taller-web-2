@@ -11,10 +11,10 @@ const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(
-  cors(/*{
+  cors({
     origin: "http://localhost:4200", 
     credentials: true, 
-  }*/)
+  })
 );
 
 app.use(express.json());

@@ -18,7 +18,7 @@ const login = async (req, res) => {
         if (user && password === user.password) { // Comparación casera
             req.session.user = { id: user.id_user, username: user.username }; // Guardar usuario en sesión
             console.log(req.session.user);
-            res.status(200).json({ message: 'Login successful', user: req.session.user });
+            res.status(200).json({user});
         } else {
             res.status(401).json({ message: 'Invalid username or password' });
         }

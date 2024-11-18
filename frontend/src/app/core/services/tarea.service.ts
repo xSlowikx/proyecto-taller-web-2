@@ -23,49 +23,28 @@ export class TareaService extends ApiGenericService {
     super(httpClient, ENVIRONMENT.API_URL, ENDPOINTS.TAREA);
   }
 
-  async getAllTareas(): Promise<TaskDTO_In[]> {
+  /*async getAllTareas() {
     try {
-      // Primero, realiza el login utilizando fetch
-      const loginResponse = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: 'elolina',
-          password: 'elo123',
-        }),
-      });
-  
-      // Verifica si el login fue exitoso
-      if (!loginResponse.ok) {
-        console.log('Login failed');
-        return []; // O manejar el error de login como corresponda
-      }
-  
-      const loginData = await loginResponse.json();
-      console.log('Login successful:', loginData);
-  
-      // Si el login es exitoso, procede a obtener las tareas
-      const tasksResponse = await this.apiService
-        .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_ALL)
-        .pipe(
-          map((response) => {
-            if (response) {
-              return response;
-            }
-            return null;
-          })
-        )
-        .toPromise();
-  
-      return tasksResponse;
+      return this.apiService.get<any[]>(
+        ENVIRONMENT.API_URL,
+        ENDPOINTS.TAREA_ALL,
+        {}, // Si necesitas headers personalizados, añádelos aquí
+        { withCredentials: true } // Incluir cookies
+      );
   
     } catch (error) {
       console.error('Error during login or fetching tasks:', error);
       return []; // Retorna un array vacío en caso de error
     }
-  }
+  }*/
+
+    getTasks() {
+      return this.httpClient.get<TaskDTO_In[]>(
+        `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_ALL}`,
+        { withCredentials: true } // Agregar cookies
+      );
+    }
+    
   
 
   //ok

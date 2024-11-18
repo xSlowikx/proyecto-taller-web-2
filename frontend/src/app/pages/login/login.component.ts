@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';  // Asegúrate de importar NgForm
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';  // Importa FormsModule aquí
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,13 +13,21 @@ import { FormsModule } from '@angular/forms';  // Importa FormsModule aquí
  
 })
 export class LoginComponent {
-  constructor(private router: Router) {}
+  constructor(private router: Router, private _authService: AuthService) {}
 
 
   login(form: NgForm) {
-    const email = form.value.email;
+    const username = form.value.username;
     const password = form.value.password;
-    console.log('Email:', email, 'Password:', password);
-    this.router.navigate(['/tareas']);
+    try{
+      const response = this._authService.login({username, password})
+      if(response != null){
+        this.router.navigate(['/tareas']);
+      }
+    } catch (err) {
+      console.log('AAAAAAAAAAAAA', err)
+    }
+    
+    //
   }
 }
