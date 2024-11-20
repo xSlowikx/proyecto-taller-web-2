@@ -13,7 +13,7 @@ export const ENDPOINTS = {
   AUTH_SESSION_STATUS: 'auth/session-status',
   AUTH_LOGOUT: 'auth/logout', 
   // Pririty
-  PRIORITY: 'priority',
+  PRIORITY: 'priority/all',
 
   // State
   STATE: 'state',

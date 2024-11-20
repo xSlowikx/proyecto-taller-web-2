@@ -1,4 +1,7 @@
-export interface PriorityDTO_In {
-  id_priority: number;
-  value: string;
+export class PriorityDTO_In {
+  constructor(
+    public priority_id: number,
+    
+    public value: string,
+  ){}
 }

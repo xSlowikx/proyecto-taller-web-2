@@ -7,7 +7,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { ENVIRONMENT } from '../../../environments/environment';
 import { ENDPOINTS } from '../constants/endpoints';
-import { map } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { TaskDTO_In, TaskDTO_Out } from '../models/task/task.model';
 import { TaskOwnerDTO_In } from '../models/task_owner/task_owner.model';
 
@@ -18,8 +18,7 @@ export class TareaService extends ApiGenericService {
   constructor(
     private httpClient: HttpClient,
     private apiService: ApiService,
-    private apiMultiPartService: ApiMultipartService,
-   
+    private apiMultiPartService: ApiMultipartService
   ) {
     super(httpClient, ENVIRONMENT.API_URL, ENDPOINTS.TAREA);
   }
@@ -39,48 +38,68 @@ export class TareaService extends ApiGenericService {
     }
   }*/
 
-
-    getTasks() {
-      return this.httpClient.get<any[]>(
-        `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_ALL}`,
-        { withCredentials: true }
-      ).pipe(
-        map((tasks: any[]) => tasks.map(task => new TaskDTO_In(
-          task.id_task,
-          task.title,
-          task.description,
-          task.created_at,
-          task.modified_at,
-          task.completed_at,
-          task.user_id,
-          task.priority_id,
-          task.state_id
-        )))
-      );
-    }
-    
-
-    
-  
-
-  //ok
-  async taskDetail(id: number): Promise<TaskDTO_In> { // para el edit o el ver tarea
-    return await this.apiService
-      .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_DETAIL, id.toString())
+  getTasks() {
+    return this.httpClient
+      .get<any[]>(`${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_ALL}`, {
+        withCredentials: true,
+      })
       .pipe(
-        map((response) => {
-          if (response) {
-            return response;
-          }
-          return null;
-        })
-      )
-      .toPromise();
+        map((tasks: any[]) =>
+          tasks.map(
+            (task) =>
+              new TaskDTO_In(
+                task.id_task,
+                task.title,
+                task.description,
+                task.created_at,
+                task.modified_at,
+                task.completed_at,
+                task.user_id,
+                task.priority_id,
+                task.state_id
+              )
+          )
+        )
+      );
   }
 
-  async eliminarTareaById(id: number): Promise<void> { // este esta ok
+  //ok
+  taskDetail(id: number): Promise<TaskDTO_In | null> {
+    return this.httpClient
+      .get<any>(`${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_DETAIL}/${id}`, {
+        withCredentials: true,
+      })
+      .pipe(
+        map((response) => {
+          // Verificar si existe la propiedad "task" en la respuesta
+          if (response && response.task) {
+            const task = response.task;
+            return new TaskDTO_In(
+              task.id_task,
+              task.title,
+              task.description,
+              task.created_at,
+              task.modified_at,
+              task.completed_at,
+              task.user_id,
+              task.priority_id,
+              task.state_id
+            );
+          }
+          // Si no hay tarea, devolver null
+          return null;
+        }),
+        catchError(() => {
+          // Manejo de errores, devuelve null si ocurre un error
+          return of(null);
+        })
+      )
+      .toPromise() as Promise<TaskDTO_In | null>;
+  }
+
+  async eliminarTareaById(id: number): Promise<void> {
     const url = `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_DELETE}/${id}`;
-    return await this.httpClient.put<void>(url, {}).toPromise();
+    return this.httpClient.put<void>(url, {}).toPromise();
   }
 
   async updateTask(tarea: TaskDTO_Out): Promise<any> {
@@ -89,7 +108,7 @@ export class TareaService extends ApiGenericService {
       .put<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_UPDATE, data)
       .toPromise();
   }
-  
+
   async creatTask(tarea: TaskDTO_Out): Promise<any> {
     var data = this.generarFormDataCrear(tarea);
     return await this.apiMultiPartService
@@ -108,27 +127,21 @@ export class TareaService extends ApiGenericService {
   generarFormDataCrear(tarea: TaskDTO_Out) {
     var formData = new FormData();
 
-    formData.append( // entre '' es como se llama en el back. - modificar.
+    formData.append(
+      // entre '' es como se llama en el back. - modificar.
       'id_task',
       tarea.id_task ? tarea.id_task.toString() : '0'
     );
-    formData.append(
-      'title',
-      tarea.title ? tarea.title.toString() : '0'
-    );
+    formData.append('title', tarea.title ? tarea.title.toString() : '0');
     formData.append(
       'description',
       tarea.description ? tarea.description.toString() : '0'
     );
     formData.append(
-      'user_id',
-      tarea.user_id ? tarea.user_id.toString() : '0'
-    );
-    formData.append(
       'priority_id',
       tarea.priority_id ? tarea.priority_id.toString() : '0'
     );
-    
+
     return formData;
   }
 }

@@ -37,37 +37,28 @@
           </div>
           <div class="row m-t-20">
             <div class="col-12 mb-3">
-            <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block"
-            >Prioridad *</mat-label
-            >
-            <mat-form-field appearance="outline" class="w-100" color="primary">
-            <mat-select
-              #mySelect
-              formControlName="prioridad"
-              placeholder="Seleccione una prioridad"
-              aria-modal
-            >
-              <mat-option>
-                <ngx-mat-select-search
-                  (keydown.enter)="$event.stopPropagation()"
-                  formControlName="filteredPrioridad"
-                  placeholderLabel="Buscar prioridad"
-                  noEntriesFoundLabel=""
-                ></ngx-mat-select-search
-              ></mat-option>
-              <mat-option
-                *ngFor="let prioridad of filteredPrioridades"
-                [value]="prioridad.id_priority"
-              >
-                {{ prioridad.value }}
-              </mat-option>
-            </mat-select>
-            <mat-error class="mat-error">{{
-              errorMessage("prioridad")
-            }}</mat-error>
-            </mat-form-field>
+              <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">Prioridad *</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-select
+                  #mySelect
+                  formControlName="prioridad"
+                  placeholder="Seleccione una prioridad"
+                  aria-modal
+                >
+                  <mat-option
+                    *ngFor="let prioridad of prioridades"
+                    [value]="prioridad.priority_id"
+                  >
+                    {{ prioridad.value }}
+                  </mat-option>
+                </mat-select>
+                <mat-error class="mat-error">
+                  {{ errorMessage("prioridad") }}
+                </mat-error>
+              </mat-form-field>
+            </div>
           </div>
-          </div>
+          
     </mat-card-content>
     
     <mat-card-actions class="actions-container">

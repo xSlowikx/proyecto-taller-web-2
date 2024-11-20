@@ -14,18 +14,17 @@ import { PriorityDTO_In } from '../models/priority/priority.model';
 export class PriorityService {
   constructor(private httpClient: HttpClient, private apiService: ApiService) {}
 
-
   async getAllPriority(): Promise<PriorityDTO_In[]> {
-    return await this.apiService
-      .get<any>(ENVIRONMENT.API_URL, ENDPOINTS.PRIORITY)
-      .pipe(
-        map((response) => {
-          if (response) {
-            return response;
-          }
-          return null;
+    return firstValueFrom(
+      this.httpClient
+        .get<any[]>(`${ENVIRONMENT.API_URL}${ENDPOINTS.PRIORITY}`, {
+          withCredentials: true,
         })
-      )
-      .toPromise();
+        .pipe(
+          map((pp: any[]) =>
+            pp.map((p) => new PriorityDTO_In(p.priority_id, p.value))
+          )
+        )
+    );
   }
 }

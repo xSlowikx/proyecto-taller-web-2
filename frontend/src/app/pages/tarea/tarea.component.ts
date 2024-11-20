@@ -71,7 +71,7 @@ export class TareaComponent implements OnInit {
   }
   toggleRow(checked: boolean, element: TaskDTO_In, checkbox: MatCheckbox) {
     // Cambiar el estado del elemento
-    element.state_id = checked ? 1 : 0;
+    element.state_id = checked ? 2 : 0;
     
     // Cambiar la clase de la fila según el estado
     //element.rowClass = element.state_id === 1 ? 'tachado' : '';
@@ -83,7 +83,7 @@ export class TareaComponent implements OnInit {
     }
   }
 
-  openDialog(id: number) {
+  async openDialog(id: number) {
     const dialogRef = this.dialog.open(EliminarDialogComponent, {
       width: '600px',
       data: {
@@ -92,23 +92,23 @@ export class TareaComponent implements OnInit {
           '¿Está seguro que desea eliminar esta tarea? Este cambio es irreversible.',
       },
     });
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this._tareaService
-          .eliminarTareaById(id)
-          .then((x) => {
-            this.refreshEvent.emit();
-          })
-          .catch((e) => {
-            this.dialog.open(ErrorDialogComponent, {
-              width: '600px',
-              data: {
-                titulo: 'Atención',
-                mensaje: e,
-              },
-            });
-          });
+  
+    const res = await dialogRef.afterClosed().toPromise();
+  
+    if (res) {
+      try {
+        await this._tareaService.eliminarTareaById(id);
+        this.refreshEvent.emit();
+      } catch (e) {
+        this.dialog.open(ErrorDialogComponent, {
+          width: '600px',
+          data: {
+            titulo: 'Atención',
+            mensaje: e,
+          },
+        });
       }
-    });
+    }
   }
+  
 }

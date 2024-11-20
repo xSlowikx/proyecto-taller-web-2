@@ -16,6 +16,7 @@ import { MaterialModule } from '../../../../material.module';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../../../header/header.component';
 import { PriorityDTO_In } from '../../../../core/models/priority/priority.model';
+import { PriorityService } from '../../../../core/services/priority.service';
 
 @Component({
   selector: 'app-add-edit-tarea',
@@ -35,20 +36,18 @@ export class AddEditTareaComponent implements OnInit {
   title: string = 'Crear tarea';
   formTarea!: FormGroup;
   prioridades: PriorityDTO_In[] = [];
-  filteredPrioridades: PriorityDTO_In[] = [];
 
   constructor(
     public dialog: MatDialog,
     private _tareaService: TareaService,
+    private _prioridadService : PriorityService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
-
-  ngOnInit() {
-    // Acceder al parámetro 'id' de la URL
+  ) {
     this.route.params.subscribe((params) => {
       this.id = +params['id']; // Convertir el id a número
       this.editMode = this.router.url.includes('edit');
+      console.log(this.id)
       if (this.editMode) {
         this.title = 'Editar tarea';
       }
@@ -56,8 +55,14 @@ export class AddEditTareaComponent implements OnInit {
         this.goBack(); // Si no hay id y se está en modo edición, volver
       }
     });
+  }
 
+  async ngOnInit() {
     this.crearFormulario();
+    await this.obtenerPrioridades();
+    if (this.editMode && this.id) {
+      await this.obtenerTarea();
+    }
   }
 
   private crearFormulario() {
@@ -69,10 +74,21 @@ export class AddEditTareaComponent implements OnInit {
     });
   }
 
+  private async obtenerTarea(){
+    const tarea = await this._tareaService.taskDetail(this.id);
+    this.formTarea.get('titulo')?.setValue(tarea?.title);
+    this.formTarea.get('descripcion')?.setValue(tarea?.description);
+    this.formTarea.get('prioridad')?.setValue(tarea?.priority_id);
+  }
+
+  private async obtenerPrioridades() {
+    this.prioridades = await this._prioridadService.getAllPriority();
+  }
   onSubmit() {
     if (this.formTarea.valid) {
       let tarea = this.mapearTarea();
       if (this.editMode) {
+        tarea.modified_at = new Date().toISOString();
         this._tareaService
           .updateTask(tarea)
           .then(() => this.goBack())
@@ -86,6 +102,7 @@ export class AddEditTareaComponent implements OnInit {
             });
           });
       } else {
+        tarea.created_at = new Date().toISOString();
         this._tareaService
           .creatTask(tarea)
           .then(() => this.goBack())
@@ -109,14 +126,11 @@ export class AddEditTareaComponent implements OnInit {
       id_task: this.id ?? 0,
       title: this.formTarea.get('titulo')?.value.toString() ?? '',
       description: this.formTarea.get('descripcion')?.value.toString() ?? '',
-      user_id: this.user, // ver cómo traerlo
       priority_id: this.formTarea.get('prioridad')?.value.toString() ?? '',
-      state_id: null // En back se modifica
-      ,
+      state_id: null,
       created_at: '',
       modified_at: null,
       completed_at: null,
-      rowClass: undefined
     };
     return tarea;
   }

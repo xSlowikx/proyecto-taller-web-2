@@ -10,7 +10,7 @@ const getAllTasks = async (req, res) => {
       .request()
       //.input("userId", sql.Int, userId)
       //.query("SELECT * FROM task WHERE user_id = @userId");
-      .query("SELECT * FROM task");
+      .query("SELECT * FROM task where state_id != 5");
 
     res.status(200).json(result.recordset);
   } catch (err) {

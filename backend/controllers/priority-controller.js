@@ -6,7 +6,7 @@ const getAllPriorities = async (req, res) => {
     const pool = await poolPromise;
     const result = await pool
       .request()
-      .query("SELECT * FROM priority");
+      .query("SELECT * FROM priority order by value asc");
 
     res.status(200).json(result.recordset);
   } catch (err) {
