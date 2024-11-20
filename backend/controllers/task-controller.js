@@ -3,14 +3,14 @@ const { sql, poolPromise } = require("../config/db-connection");
 
 const getAllTasks = async (req, res) => {
   try {
-    const userId = req.session.user.id; // Obtener el ID del usuario autenticado
+    // const userId = req.session.user.id; // Feature postergada
 
-    // Consulta para obtener tareas específicas del usuario
     const pool = await poolPromise;
     const result = await pool
       .request()
-      .input("userId", sql.Int, userId)
-      .query("SELECT * FROM task WHERE user_id = @userId");
+      //.input("userId", sql.Int, userId)
+      //.query("SELECT * FROM task WHERE user_id = @userId");
+      .query("SELECT * FROM task");
 
     res.status(200).json(result.recordset);
   } catch (err) {
@@ -47,7 +47,7 @@ const getDetail = async (req, res) => {
 const createTask = async (req, res) => {
   try {
     const { title, description, priority } = req.body;
-    const userId = req.session.user.id;
+    // const userId = req.session.user.id; Feature postergada
     const pool = await poolPromise;
 
     const result = await pool
@@ -55,9 +55,10 @@ const createTask = async (req, res) => {
       .input("title", sql.NVarChar, title)
       .input("description", sql.NVarChar, description)
       .input("priority", sql.Int, priority)
-      .input("userId", sql.Int, userId).query(`
-                INSERT INTO task (title, description, priority_id, user_id)
-                VALUES (@title, @description, @priority, @userId);
+      //.input("userId", sql.Int, userId)
+      .query(`
+                INSERT INTO task (title, description, priority_id)
+                VALUES (@title, @description, @priority);
                 SELECT SCOPE_IDENTITY() AS taskId;
             `);
     const taskId = result.recordset[0].taskId;
@@ -122,22 +123,22 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   try {
     const taskId = req.params.id; // Capturar ID de la tarea
-    const userId = req.session.user?.id; // Capturar ID del usuario autenticado desde la sesión
+    // const userId = req.session.user?.id; // Capturar ID del usuario autenticado desde la sesión
 
-    if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" }); // Si no hay sesión activa
-    }
+    //if (!userId) {
+    //  return res.status(401).json({ message: "Unauthorized" }); // Si no hay sesión activa
+    //}
 
     const pool = await poolPromise;
 
     // Verificar que la tarea pertenece al usuario autenticado
     const ownerCheck = await pool.request()
       .input("id", sql.Int, taskId)
-      .input("userId", sql.Int, userId)
+      // .input("userId", sql.Int, userId)
       .query(`
         SELECT id_task 
         FROM task 
-        WHERE id_task = @id AND user_id = @userId
+        WHERE id_task = @id
       `);
 
     if (ownerCheck.recordset.length === 0) {
