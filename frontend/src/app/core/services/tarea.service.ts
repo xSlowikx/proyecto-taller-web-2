@@ -7,7 +7,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { ENVIRONMENT } from '../../../environments/environment';
 import { ENDPOINTS } from '../constants/endpoints';
-import { catchError, map, of } from 'rxjs';
+import { catchError, lastValueFrom, map, of } from 'rxjs';
 import { TaskDTO_In, TaskDTO_Out } from '../models/task/task.model';
 import { TaskOwnerDTO_In } from '../models/task_owner/task_owner.model';
 
@@ -103,45 +103,59 @@ export class TareaService extends ApiGenericService {
   }
 
   async updateTask(tarea: TaskDTO_Out): Promise<any> {
-    const data = this.generarFormDataCrear(tarea);
-    return await this.apiMultiPartService
-      .put<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_UPDATE, data)
-      .toPromise();
+    console.log('Datos enviados al backend para actualización:', tarea);  // Verifica que los datos estén completos
+  
+    try {
+      const url = `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_UPDATE}/${tarea.id_task}`;
+      const response = await this.httpClient.put<any>(url, tarea, {
+        headers: { 'Content-Type': 'application/json' },
+      }).toPromise();
+  
+      return response || null;
+    } catch (error) {
+      console.error('Error updating task:', error);
+      throw error;
+    }
   }
-
-  async creatTask(tarea: TaskDTO_Out): Promise<any> {
-    var data = this.generarFormDataCrear(tarea);
-    return await this.apiMultiPartService
-      .post<any>(ENVIRONMENT.API_URL, ENDPOINTS.TAREA_CREATE, data)
-      .pipe(
-        map((response) => {
-          if (response) {
-            return response;
+  
+  
+  
+  
+  
+  async createTask(tarea: TaskDTO_Out): Promise<any> {
+    console.log('Datos enviados al backend:', JSON.stringify(tarea)); // Imprimir el JSON para verificar
+    try {
+      const response = await lastValueFrom(
+        this.httpClient.post<any>(
+          `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_CREATE}`,
+          tarea, // Cuerpo de la solicitud (JSON)
+          {
+            headers: { 'Content-Type': 'application/json' }, // Asegura que se envíe como JSON
           }
-          return null;
-        })
-      )
-      .toPromise();
+        )
+      );
+      return response || null;
+    } catch (error) {
+      console.error('Error creating task:', error);
+      throw error;
+    }
   }
+  
 
-  generarFormDataCrear(tarea: TaskDTO_Out) {
-    var formData = new FormData();
-
-    formData.append(
-      // entre '' es como se llama en el back. - modificar.
-      'id_task',
-      tarea.id_task ? tarea.id_task.toString() : '0'
-    );
-    formData.append('title', tarea.title ? tarea.title.toString() : '0');
-    formData.append(
-      'description',
-      tarea.description ? tarea.description.toString() : '0'
-    );
-    formData.append(
-      'priority_id',
-      tarea.priority_id ? tarea.priority_id.toString() : '0'
-    );
-
+  generarFormDataCrear(tarea: TaskDTO_Out): FormData {
+    const formData = new FormData();
+  
+    // Agrega cada propiedad de la tarea al FormData
+    formData.append('id_task', tarea.id_task?.toString() || '');
+    formData.append('title', tarea.title || '');
+    formData.append('description', tarea.description || '');
+    formData.append('priority_id', tarea.priority_id?.toString() || '');
+    formData.append('state_id', tarea.state_id?.toString() || '');
+    formData.append('created_at', tarea.created_at || '');
+    formData.append('modified_at', tarea.modified_at || '');
+    formData.append('completed_at', tarea.completed_at || '');
+  
     return formData;
   }
+  
 }

@@ -9,6 +9,8 @@ import { EliminarDialogComponent } from '../../components/eliminar-dialog/elimin
 import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
 import { TareaService } from '../../core/services/tarea.service';
 import { firstValueFrom } from 'rxjs';
+import { StatesEnum } from '../../core/constants/enums/states.enum';
+import { PriorityEnum, Priority } from '../../core/constants/enums/priority.enum';
 
 @Component({
   selector: 'app-tarea',
@@ -60,28 +62,41 @@ export class TareaComponent implements OnInit {
       console.error('Error al obtener tasks:', error);
     }
   }
-  
-  
 
   createTask() {
     // Implementation for creating a task
   }
+
   editar(id: number) {
     this.router.navigate(['/tareas/edit', id]);
   }
-  toggleRow(checked: boolean, element: TaskDTO_In, checkbox: MatCheckbox) {
-    // Cambiar el estado del elemento
-    element.state_id = checked ? 2 : 0;
-    
-    // Cambiar la clase de la fila según el estado
-    //element.rowClass = element.state_id === 1 ? 'tachado' : '';
-    
-    // Obtener la fila más cercana y alternar la clase 'tachado'
-    const row = checkbox._elementRef.nativeElement.closest('tr'); // Usamos nativeElement para acceder al tr
-    if (row) {
-      row.classList.toggle('tachado', checked); // Tacha o destacha la fila según el estado del checkbox
-    }
+
+async toggleRow(checked: boolean, element: TaskDTO_In, checkbox: MatCheckbox) {
+
+  // Si se marca como completada, establecer la fecha de completado
+  if (checked) {
+    element.completed_at = new Date().toISOString();
+    element.state_id = StatesEnum.FINALIZADA;
+  } else {
+    element.completed_at = ''; // Si desmarcas, establecer como null
+    element.state_id = StatesEnum.EN_PROGRESO;
   }
+
+  try {
+    const response = await this._tareaService.updateTask(element);
+    console.log('Tarea actualizada correctamente:', response);
+    
+    const row = checkbox._elementRef.nativeElement.closest('tr');
+    if (row) {
+      row.classList.toggle('tachado', checked);
+    }
+  } catch (err) {
+    console.error('Error al actualizar la tarea:', err);
+    checkbox.checked = !checked; // revertir el estado del checkbox si hay error
+  }
+}
+
+
 
   async openDialog(id: number) {
     const dialogRef = this.dialog.open(EliminarDialogComponent, {
@@ -98,7 +113,7 @@ export class TareaComponent implements OnInit {
     if (res) {
       try {
         await this._tareaService.eliminarTareaById(id);
-        this.refreshEvent.emit();
+        window.location.reload(); 
       } catch (e) {
         this.dialog.open(ErrorDialogComponent, {
           width: '600px',
@@ -109,6 +124,11 @@ export class TareaComponent implements OnInit {
         });
       }
     }
+  }
+
+  getPriorityDescription(codigo: number): string {
+    const state = Priority.find(p => p.codigo === codigo);
+    return state ? state.description : 'Descripción no encontrada'; // Si no se encuentra, retorna 'Descripción no encontrada'
   }
   
 }

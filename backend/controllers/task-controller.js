@@ -46,48 +46,54 @@ const getDetail = async (req, res) => {
 
 const createTask = async (req, res) => {
   try {
-    const { title, description, priority } = req.body;
-    // const userId = req.session.user.id; Feature postergada
+    const { title, description, priority_id } = req.body;
+    console.log('Received data:', req.body); // Verificar los datos recibidos
+    if (!title || !description || !priority_id) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
     const pool = await poolPromise;
-
     const result = await pool
       .request()
-      .input("title", sql.NVarChar, title)
-      .input("description", sql.NVarChar, description)
-      .input("priority", sql.Int, priority)
-      //.input("userId", sql.Int, userId)
+      .input('title', sql.NVarChar, title)
+      .input('description', sql.NVarChar, description)
+      .input('priority', sql.Int, priority_id)
       .query(`
-                INSERT INTO task (title, description, priority_id)
-                VALUES (@title, @description, @priority);
-                SELECT SCOPE_IDENTITY() AS taskId;
-            `);
+        INSERT INTO task (title, description, priority_id)
+        VALUES (@title, @description, @priority);
+        SELECT SCOPE_IDENTITY() AS taskId;
+      `);
     const taskId = result.recordset[0].taskId;
-    res.status(201).json({ message: "Task created successfully", taskId });
+    res.status(201).json({ message: 'Task created successfully', taskId });
   } catch (err) {
-    console.error("Error creating task:", err);
-    res
-      .status(500)
-      .json({ error: "Something went wrong while creating the task" });
+    console.error('Error creating task:', err);
+    res.status(500).json({ error: 'Something went wrong while creating the task' });
   }
 };
+
 
 const updateTask = async (req, res) => {
   try {
     const taskId = req.params.id;
-    const { title, description, status, priority } = req.body;
-    const pool = await poolPromise;
+    const { title, description, state_id, priority_id } = req.body;
 
+    if (!title || !description || state_id == null || priority_id == null) {
+      return res.status(400).json({ error: "Missing required fields: title, description, state_id, or priority_id" });
+    }
+
+    const pool = await poolPromise;
     let query = `
       UPDATE task
       SET title = @title, 
           description = @description, 
-          state_id = @status, 
-          priority_id = @priority, 
+          state_id = @state_id, 
+          priority_id = @priority_id, 
           modified_at = @modified_at
     `;
 
-    if (status === 4) {
+    if (state_id === 4) {
       query += `, completed_at = @completed_at`;
+    } else {
+      query += `, completed_at = NULL`;
     }
 
     query += ` WHERE id_task = @id`;
@@ -97,20 +103,18 @@ const updateTask = async (req, res) => {
       .input("id", sql.Int, taskId)
       .input("title", sql.NVarChar, title)
       .input("description", sql.NVarChar, description)
-      .input("status", sql.Int, status)
-      .input("modified_at", sql.DateTime, new Date())
-      .input("priority", sql.Int, priority);
+      .input("state_id", sql.Int, state_id)
+      .input("priority_id", sql.Int, priority_id)
+      .input("modified_at", sql.DateTime, new Date());
 
-    if (status === 4) {
+    if (state_id === 4) {
       request.input("completed_at", sql.DateTime, new Date());
     }
 
     const result = await request.query(query);
 
     if (result.rowsAffected[0] === 0) {
-      return res
-        .status(404)
-        .json({ message: "Task not found or no changes made" });
+      return res.status(404).json({ message: "Task not found or no changes made" });
     }
 
     res.status(200).json({ message: "Task updated successfully" });
@@ -119,6 +123,8 @@ const updateTask = async (req, res) => {
     res.status(500).json({ error: "Failed to update task" });
   }
 };
+
+
 
 const deleteTask = async (req, res) => {
   try {

@@ -6,7 +6,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { StateDTO_In } from '../../../../core/models/state/state.model';
 import { TareaService } from '../../../../core/services/tarea.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TaskDTO_Out } from '../../../../core/models/task/task.model';
@@ -14,7 +13,6 @@ import { ErrorDialogComponent } from '../../../../components/error-dialog/error-
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../../../material.module';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from '../../../header/header.component';
 import { PriorityDTO_In } from '../../../../core/models/priority/priority.model';
 import { PriorityService } from '../../../../core/services/priority.service';
 
@@ -84,56 +82,56 @@ export class AddEditTareaComponent implements OnInit {
   private async obtenerPrioridades() {
     this.prioridades = await this._prioridadService.getAllPriority();
   }
-  onSubmit() {
+  
+  async onSubmit() {
     if (this.formTarea.valid) {
-      let tarea = this.mapearTarea();
+      const tarea = this.mapearTarea();
+  
       if (this.editMode) {
         tarea.modified_at = new Date().toISOString();
-        this._tareaService
-          .updateTask(tarea)
+        const tareaBuscada = await this._tareaService.taskDetail(this.id);
+        tarea.state_id = tareaBuscada?.state_id ?? 0;
+        tarea.created_at = tareaBuscada?.created_at ?? '';
+
+        this._tareaService.updateTask(tarea)
           .then(() => this.goBack())
-          .catch((e) => {
-            this.dialog.open(ErrorDialogComponent, {
-              width: '600px',
-              data: {
-                titulo: 'Atención',
-                mensaje: e,
-              },
-            });
-          });
+          .catch((error) => this.mostrarError(error));
       } else {
         tarea.created_at = new Date().toISOString();
-        this._tareaService
-          .creatTask(tarea)
+        console.log(tarea, 'Tarea creada');
+        this._tareaService.createTask(tarea)
           .then(() => this.goBack())
-          .catch((e) => {
-            this.dialog.open(ErrorDialogComponent, {
-              width: '600px',
-              data: {
-                titulo: 'Atención',
-                mensaje: e,
-              },
-            });
-          });
+          .catch((error) => this.mostrarError(error));
       }
     } else {
       this.formTarea.markAllAsTouched();
     }
   }
+  
+  private mostrarError(error: any) {
+    this.dialog.open(ErrorDialogComponent, {
+      width: '600px',
+      data: {
+        titulo: 'Atención',
+        mensaje: error.message || 'Ocurrió un error inesperado',
+      },
+    });
+  }
 
+  
   private mapearTarea(): TaskDTO_Out {
-    let tarea: TaskDTO_Out = {
+    return {
       id_task: this.id ?? 0,
-      title: this.formTarea.get('titulo')?.value.toString() ?? '',
-      description: this.formTarea.get('descripcion')?.value.toString() ?? '',
-      priority_id: this.formTarea.get('prioridad')?.value.toString() ?? '',
+      title: this.formTarea.get('titulo')?.value?.toString() ?? '',
+      description: this.formTarea.get('descripcion')?.value?.toString() ?? '',
+      priority_id: parseInt(this.formTarea.get('prioridad')?.value, 10) || 0,
       state_id: null,
       created_at: '',
       modified_at: null,
       completed_at: null,
     };
-    return tarea;
   }
+  
 
   errorMessage(controlName: string): string {
     const control: FormControl = this.formTarea.get(controlName) as FormControl;

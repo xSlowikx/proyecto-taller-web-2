@@ -1,7 +1,7 @@
 export enum StatesEnum {
-    EN_PROGRESO = 1,
-    FINALIZADA = 2,
-    ELIMINADA = 3,
+    EN_PROGRESO = 2,
+    FINALIZADA = 4,
+    ELIMINADA = 5,
   }
   export const States = [
     {

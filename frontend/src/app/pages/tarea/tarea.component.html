@@ -1,17 +1,17 @@
 <app-header></app-header>
 <mat-card class="cardWithShadow m-4 fondo">
-  <mat-card-content >
+  <mat-card-content>
     <div
-      class="table-responsive m-t-30 p-l-10 "
+      class="table-responsive m-t-30 p-l-10"
       *ngIf="dataSource.data.length > 0"
     >
-      <table mat-table [dataSource]="dataSource" class="w-100 fondo2 ">
+      <table mat-table [dataSource]="dataSource" class="w-100 fondo2">
         <!-- Column Definitions -->
         <ng-container matColumnDef="estado">
           <th mat-header-cell *matHeaderCellDef class="text-center titulo">Estado</th>
           <td mat-cell *matCellDef="let element" class="text-center">
             <mat-checkbox 
-              [checked]="element.state_id === 1" 
+              [checked]="element.state_id === 4" 
               (change)="toggleRow($event.checked, element, $event.source)">
             </mat-checkbox>
           </td>
@@ -25,36 +25,28 @@
         </ng-container>
 
         <ng-container matColumnDef="descripcion">
-          <th mat-header-cell *matHeaderCellDef class="text-left titulo">
-            Descripción
-          </th>
+          <th mat-header-cell *matHeaderCellDef class="text-left titulo">Descripción</th>
           <td mat-cell *matCellDef="let element" class="text-left">
             {{ element.description }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="prioridad">
-          <th mat-header-cell *matHeaderCellDef class="text-center titulo">
-            Prioridad
-          </th>
+          <th mat-header-cell *matHeaderCellDef class="text-center titulo">Prioridad</th>
           <td mat-cell *matCellDef="let element" class="text-center">
-            {{ element.priority_id }}
+            {{ getPriorityDescription(element.priority_id) }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="creado">
-          <th mat-header-cell *matHeaderCellDef class="text-center titulo">
-            Fecha Creación
-          </th>
+          <th mat-header-cell *matHeaderCellDef class="text-center titulo">Fecha Creación</th>
           <td mat-cell *matCellDef="let element" class="text-center">
-            {{ element.created_at }}
+            {{ element.created_at | date: 'dd/MM/yyyy HH:mm' }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef class="text-center titulo">
-            Acciones
-          </th>
+          <th mat-header-cell *matHeaderCellDef class="text-center titulo">Acciones</th>
           <td mat-cell *matCellDef="let element" class="text-center">
             <button class="btn-accion" mat-icon-button (click)="editar(element.id_task)">
               <mat-icon>edit</mat-icon>
@@ -67,14 +59,10 @@
 
         <!-- Header and Row Declarations -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let element; columns: displayedColumns" [ngClass]="{'tachado': element.state_id === 1}"></tr>
+        <tr mat-row *matRowDef="let element; columns: displayedColumns" [ngClass]="{ 'tachado': element.state_id === 4 }"></tr>
       </table>
     </div>
-    <mat-paginator class="fondo-abajo"
-    [pageSizeOptions]="[5, 10, 20]"
-    showFirstLastButtons
-  ></mat-paginator>
-</mat-card-content>
+
+    <mat-paginator class="fondo-abajo" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </mat-card-content>
 </mat-card>
-    
-   
