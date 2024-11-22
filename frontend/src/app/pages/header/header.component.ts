@@ -22,7 +22,5 @@ export class HeaderComponent {
       this.router.navigate(['/tareas/add']);
     }
     
-    cerrarSesion(){
-      this.router.navigate(['/login'])
-    }
+  
 }
