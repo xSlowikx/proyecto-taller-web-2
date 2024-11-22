@@ -9,7 +9,7 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewares
+
 app.use(
   cors({
     origin: "http://localhost:4200", 
@@ -18,12 +18,7 @@ app.use(
 );
 
 app.use(express.json());
-// app.use(sessionMiddleware); Esta feature quedara postergada a una futura iteracion
 
-// console.log("INDEX, SESSIONMIDDLEWARE ->", {sessionMiddleware}); Esta feature quedara postergada a una futura iteracion
-
-// Rutas
-// app.use('/api/auth', authRoutes); Esta feature quedara postergada a una futura iteracion, no es requerida actualmente.
 app.use('/api/task', taskRoutes);
 app.use('/api/state', stateRoutes);
 app.use('/api/priority', priorityRoutes);

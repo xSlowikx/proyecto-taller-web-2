@@ -7,19 +7,16 @@ import { AppComponent } from './app.component';
 import { TareaComponent } from './pages/tarea/tarea.component';
 import { HeaderComponent } from './pages/header/header.component';
 import { AddEditTareaComponent } from './pages/tarea/components/add-edit-tarea/add-edit-tarea.component';
-import { LoginComponent } from './pages/login/login.component';
 import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table'; // Import MatTableModule
-import { MatPaginatorModule } from '@angular/material/paginator'; // Optional if using paginator
-import { MatSortModule } from '@angular/material/sort'; // Optional if using sorting
+import { MatTableModule } from '@angular/material/table'; 
+import { MatPaginatorModule } from '@angular/material/paginator'; 
+import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
 import { TareaModule } from './pages/tarea/tarea.module';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { LoginModule } from './pages/login/login.module';
 import { EliminarDialogComponent } from './components/eliminar-dialog/eliminar-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
-import { RegistroComponent } from './pages/registro/registro.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,11 +38,8 @@ import { RegistroComponent } from './pages/registro/registro.component';
     AddEditTareaComponent,
     HttpClientModule,
     MatCheckbox,
-    LoginModule,
-    LoginComponent,
     MatButtonModule,
     EliminarDialogComponent,
-    RegistroComponent
    
   ],
   providers: [],

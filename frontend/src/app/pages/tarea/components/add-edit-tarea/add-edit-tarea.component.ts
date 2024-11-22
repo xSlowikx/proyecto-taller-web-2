@@ -43,14 +43,14 @@ export class AddEditTareaComponent implements OnInit {
     private router: Router
   ) {
     this.route.params.subscribe((params) => {
-      this.id = +params['id']; // Convertir el id a número
+      this.id = +params['id'];
       this.editMode = this.router.url.includes('edit');
       console.log(this.id)
       if (this.editMode) {
         this.title = 'Editar tarea';
       }
       if (!this.id && this.editMode) {
-        this.goBack(); // Si no hay id y se está en modo edición, volver
+        this.goBack(); 
       }
     });
   }

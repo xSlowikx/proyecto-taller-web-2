@@ -6,7 +6,7 @@ const login = async (req, res) => {
         console.log(req.body);
         const { username, password } = req.body;
 
-        // Conexión a la base de datos
+        
         const pool = await poolPromise;
         const result = await pool.request()
             .input('username', sql.NVarChar, username)
@@ -14,9 +14,8 @@ const login = async (req, res) => {
 
         const user = result.recordset[0];
 
-        // Validar credenciales
-        if (user && password === user.password) { // Comparación casera
-            req.session.user = { id: user.id_user, username: user.username }; // Guardar usuario en sesión
+        if (user && password === user.password) { 
+            req.session.user = { id: user.id_user, username: user.username };
             console.log(req.session.user);
             res.status(200).json({user});
         } else {

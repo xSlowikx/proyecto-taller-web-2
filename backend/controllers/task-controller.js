@@ -3,13 +3,12 @@ const { sql, poolPromise } = require("../config/db-connection");
 
 const getAllTasks = async (req, res) => {
   try {
-    // const userId = req.session.user.id; // Feature postergada
+   
 
     const pool = await poolPromise;
     const result = await pool
       .request()
-      //.input("userId", sql.Int, userId)
-      //.query("SELECT * FROM task WHERE user_id = @userId");
+     
       .query("SELECT * FROM task where state_id != 5");
 
     res.status(200).json(result.recordset);
@@ -47,7 +46,7 @@ const getDetail = async (req, res) => {
 const createTask = async (req, res) => {
   try {
     const { title, description, priority_id } = req.body;
-    console.log('Received data:', req.body); // Verificar los datos recibidos
+    console.log('Received data:', req.body); 
     if (!title || !description || !priority_id) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
@@ -128,19 +127,13 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
-    const taskId = req.params.id; // Capturar ID de la tarea
-    // const userId = req.session.user?.id; // Capturar ID del usuario autenticado desde la sesión
-
-    //if (!userId) {
-    //  return res.status(401).json({ message: "Unauthorized" }); // Si no hay sesión activa
-    //}
+    const taskId = req.params.id; 
 
     const pool = await poolPromise;
 
-    // Verificar que la tarea pertenece al usuario autenticado
     const ownerCheck = await pool.request()
       .input("id", sql.Int, taskId)
-      // .input("userId", sql.Int, userId)
+      
       .query(`
         SELECT id_task 
         FROM task 
@@ -153,10 +146,10 @@ const deleteTask = async (req, res) => {
         .json({ message: "You are not authorized to delete this task" });
     }
 
-    // Actualizar estado de la tarea a "eliminada" (state_id = 5)
+    
     const result = await pool.request()
       .input("id", sql.Int, taskId)
-      .input("status", sql.Int, 5) // Estado de eliminado
+      .input("status", sql.Int, 5) 
       .input("modified_at", sql.DateTime, new Date())
       .query(`
         UPDATE task

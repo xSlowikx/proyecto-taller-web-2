@@ -2,7 +2,7 @@
   height: auto;
   padding-bottom: 25px;
   .messege {
-    // overflow: visible;
+  
     height: auto;
     margin-top: 5px;
   }
@@ -19,18 +19,15 @@
   padding: 0 !important;
 }
 
-::ng-deep .messege::-webkit-scrollbar {
-  // overflow-y: hidden !important;
-}
 
-// Simple
+
 ::ng-deep .messege::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::ng-deep .messege::-webkit-scrollbar-track {
   border-radius: 10px;
-  // background: rgba(0, 0, 0, 0.1);
+  
 }
 ::ng-deep .messege::-webkit-scrollbar-thumb {
   border-radius: 10px;

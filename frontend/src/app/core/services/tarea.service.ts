@@ -9,7 +9,7 @@ import { ENVIRONMENT } from '../../../environments/environment';
 import { ENDPOINTS } from '../constants/endpoints';
 import { catchError, lastValueFrom, map, of } from 'rxjs';
 import { TaskDTO_In, TaskDTO_Out } from '../models/task/task.model';
-import { TaskOwnerDTO_In } from '../models/task_owner/task_owner.model';
+;
 
 @Injectable({
   providedIn: 'root',
@@ -23,20 +23,7 @@ export class TareaService extends ApiGenericService {
     super(httpClient, ENVIRONMENT.API_URL, ENDPOINTS.TAREA);
   }
 
-  /*async getAllTareas() {
-    try {
-      return this.apiService.get<any[]>(
-        ENVIRONMENT.API_URL,
-        ENDPOINTS.TAREA_ALL,
-        {}, // Si necesitas headers personalizados, añádelos aquí
-        { withCredentials: true } // Incluir cookies
-      );
-  
-    } catch (error) {
-      console.error('Error during login or fetching tasks:', error);
-      return []; // Retorna un array vacío en caso de error
-    }
-  }*/
+
 
   getTasks() {
     return this.httpClient
@@ -63,7 +50,7 @@ export class TareaService extends ApiGenericService {
       );
   }
 
-  //ok
+ 
   taskDetail(id: number): Promise<TaskDTO_In | null> {
     return this.httpClient
       .get<any>(`${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_DETAIL}/${id}`, {
@@ -71,7 +58,7 @@ export class TareaService extends ApiGenericService {
       })
       .pipe(
         map((response) => {
-          // Verificar si existe la propiedad "task" en la respuesta
+          
           if (response && response.task) {
             const task = response.task;
             return new TaskDTO_In(
@@ -86,11 +73,11 @@ export class TareaService extends ApiGenericService {
               task.state_id
             );
           }
-          // Si no hay tarea, devolver null
+         
           return null;
         }),
         catchError(() => {
-          // Manejo de errores, devuelve null si ocurre un error
+          
           return of(null);
         })
       )
@@ -103,7 +90,7 @@ export class TareaService extends ApiGenericService {
   }
 
   async updateTask(tarea: TaskDTO_Out): Promise<any> {
-    console.log('Datos enviados al backend para actualización:', tarea);  // Verifica que los datos estén completos
+    console.log('Datos enviados al backend para actualización:', tarea); 
   
     try {
       const url = `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_UPDATE}/${tarea.id_task}`;
@@ -123,14 +110,14 @@ export class TareaService extends ApiGenericService {
   
   
   async createTask(tarea: TaskDTO_Out): Promise<any> {
-    console.log('Datos enviados al backend:', JSON.stringify(tarea)); // Imprimir el JSON para verificar
+    console.log('Datos enviados al backend:', JSON.stringify(tarea)); 
     try {
       const response = await lastValueFrom(
         this.httpClient.post<any>(
           `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_CREATE}`,
-          tarea, // Cuerpo de la solicitud (JSON)
+          tarea, 
           {
-            headers: { 'Content-Type': 'application/json' }, // Asegura que se envíe como JSON
+            headers: { 'Content-Type': 'application/json' },
           }
         )
       );
@@ -145,7 +132,7 @@ export class TareaService extends ApiGenericService {
   generarFormDataCrear(tarea: TaskDTO_Out): FormData {
     const formData = new FormData();
   
-    // Agrega cada propiedad de la tarea al FormData
+   
     formData.append('id_task', tarea.id_task?.toString() || '');
     formData.append('title', tarea.title || '');
     formData.append('description', tarea.description || '');
