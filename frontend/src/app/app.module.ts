@@ -8,9 +8,9 @@ import { TareaComponent } from './pages/tarea/tarea.component';
 import { HeaderComponent } from './pages/header/header.component';
 import { AddEditTareaComponent } from './pages/tarea/components/add-edit-tarea/add-edit-tarea.component';
 import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table'; // Import MatTableModule
-import { MatPaginatorModule } from '@angular/material/paginator'; // Optional if using paginator
-import { MatSortModule } from '@angular/material/sort'; // Optional if using sorting
+import { MatTableModule } from '@angular/material/table'; 
+import { MatPaginatorModule } from '@angular/material/paginator'; 
+import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
 import { TareaModule } from './pages/tarea/tarea.module';
 import { HttpClient, HttpClientModule } from '@angular/common/http';

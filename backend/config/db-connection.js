@@ -7,10 +7,10 @@ const config = {
     server: process.env.DB_SERVER,
     database: process.env.DB_NAME,
     options: {
-        encrypt: true, // Usar true si estás en Azure; false para local
-        trustServerCertificate: true // Solo para desarrollo local
+        encrypt: true, 
+        trustServerCertificate: true 
     },
-    port: parseInt(process.env.DB_PORT, 10) || 1433 // Asegúrate de usar un número
+    port: parseInt(process.env.DB_PORT, 10) || 1433 
 };
 
 console.log(config);
