@@ -17,7 +17,6 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../../../header/header.component';
 import { PriorityDTO_In } from '../../../../core/models/priority/priority.model';
 import { PriorityService } from '../../../../core/services/priority.service';
-import { States } from '../../../../core/constants/enums/states.enum';
 
 @Component({
   selector: 'app-add-edit-tarea',
@@ -37,7 +36,7 @@ export class AddEditTareaComponent implements OnInit {
   title: string = 'Crear tarea';
   formTarea!: FormGroup;
   prioridades: PriorityDTO_In[] = [];
-  priorityEnum = States; 
+
   constructor(
     public dialog: MatDialog,
     private _tareaService: TareaService,
@@ -72,7 +71,6 @@ export class AddEditTareaComponent implements OnInit {
       descripcion: new FormControl('', [Validators.required]),
       prioridad: new FormControl('', [Validators.required]),
       filteredPrioridad: new FormControl('', []),
-      created_at: new FormControl(['']),
     });
   }
 
@@ -81,7 +79,6 @@ export class AddEditTareaComponent implements OnInit {
     this.formTarea.get('titulo')?.setValue(tarea?.title);
     this.formTarea.get('descripcion')?.setValue(tarea?.description);
     this.formTarea.get('prioridad')?.setValue(tarea?.priority_id);
-    this.formTarea.get('created_at')?.setValue(tarea?.created_at ?? new Date().toISOString());
   }
 
   private async obtenerPrioridades() {
@@ -131,7 +128,7 @@ export class AddEditTareaComponent implements OnInit {
       description: this.formTarea.get('descripcion')?.value.toString() ?? '',
       priority_id: this.formTarea.get('prioridad')?.value.toString() ?? '',
       state_id: null,
-      created_at: this.formTarea.get('created_at')?.value ?? '',
+      created_at: '',
       modified_at: null,
       completed_at: null,
     };
