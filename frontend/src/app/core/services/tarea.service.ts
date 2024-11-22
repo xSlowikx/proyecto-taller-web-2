@@ -9,8 +9,6 @@ import { ENVIRONMENT } from '../../../environments/environment';
 import { ENDPOINTS } from '../constants/endpoints';
 import { catchError, lastValueFrom, map, of } from 'rxjs';
 import { TaskDTO_In, TaskDTO_Out } from '../models/task/task.model';
-;
-
 @Injectable({
   providedIn: 'root',
 })
@@ -22,8 +20,6 @@ export class TareaService extends ApiGenericService {
   ) {
     super(httpClient, ENVIRONMENT.API_URL, ENDPOINTS.TAREA);
   }
-
-
 
   getTasks() {
     return this.httpClient
@@ -50,7 +46,6 @@ export class TareaService extends ApiGenericService {
       );
   }
 
- 
   taskDetail(id: number): Promise<TaskDTO_In | null> {
     return this.httpClient
       .get<any>(`${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_DETAIL}/${id}`, {
@@ -58,7 +53,6 @@ export class TareaService extends ApiGenericService {
       })
       .pipe(
         map((response) => {
-          
           if (response && response.task) {
             const task = response.task;
             return new TaskDTO_In(
@@ -73,11 +67,10 @@ export class TareaService extends ApiGenericService {
               task.state_id
             );
           }
-         
+
           return null;
         }),
         catchError(() => {
-          
           return of(null);
         })
       )
@@ -90,32 +83,30 @@ export class TareaService extends ApiGenericService {
   }
 
   async updateTask(tarea: TaskDTO_Out): Promise<any> {
-    console.log('Datos enviados al backend para actualización:', tarea); 
-  
+    console.log('Datos enviados al backend para actualización:', tarea);
+
     try {
       const url = `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_UPDATE}/${tarea.id_task}`;
-      const response = await this.httpClient.put<any>(url, tarea, {
-        headers: { 'Content-Type': 'application/json' },
-      }).toPromise();
-  
+      const response = await this.httpClient
+        .put<any>(url, tarea, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .toPromise();
+
       return response || null;
     } catch (error) {
       console.error('Error updating task:', error);
       throw error;
     }
   }
-  
-  
-  
-  
-  
+
   async createTask(tarea: TaskDTO_Out): Promise<any> {
-    console.log('Datos enviados al backend:', JSON.stringify(tarea)); 
+    console.log('Datos enviados al backend:', JSON.stringify(tarea));
     try {
       const response = await lastValueFrom(
         this.httpClient.post<any>(
           `${ENVIRONMENT.API_URL}${ENDPOINTS.TAREA_CREATE}`,
-          tarea, 
+          tarea,
           {
             headers: { 'Content-Type': 'application/json' },
           }
@@ -127,12 +118,10 @@ export class TareaService extends ApiGenericService {
       throw error;
     }
   }
-  
 
   generarFormDataCrear(tarea: TaskDTO_Out): FormData {
     const formData = new FormData();
-  
-   
+
     formData.append('id_task', tarea.id_task?.toString() || '');
     formData.append('title', tarea.title || '');
     formData.append('description', tarea.description || '');
@@ -141,8 +130,7 @@ export class TareaService extends ApiGenericService {
     formData.append('created_at', tarea.created_at || '');
     formData.append('modified_at', tarea.modified_at || '');
     formData.append('completed_at', tarea.completed_at || '');
-  
+
     return formData;
   }
-  
 }

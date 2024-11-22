@@ -9,17 +9,9 @@ import { EliminarDialogComponent } from '../../components/eliminar-dialog/elimin
 import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
 import { TareaService } from '../../core/services/tarea.service';
 import { firstValueFrom } from 'rxjs';
-export enum PriorityEnum {
-  URGENTE = 1,
-  NORMAL = 2,
-  BAJA = 3,
-}
+import { Priority } from '../../core/constants/enums/priority.enum';
+import { StatesEnum } from '../../core/constants/enums/states.enum';
 
-export const States = [
-  { codigo: PriorityEnum.URGENTE, description: 'Urgente' },
-  { codigo: PriorityEnum.NORMAL, description: 'Normal' },
-  { codigo: PriorityEnum.BAJA, description: 'Baja' },
-];
 @Component({
   selector: 'app-tarea',
   templateUrl: './tarea.component.html',
@@ -41,31 +33,14 @@ export class TareaComponent implements OnInit {
   
   async ngOnInit() {
     await this.obtenerDatos();
-    console.log('hola', this.tasks);
+    console.log('hola' + this.tasks)
     this.dataSource.data = this.tasks.map((task) => ({
       ...task,
-      created_at: this.obtenerFechaLegible(task.created_at), 
-      priority_description: this.obtenerValorPrioridad(task.priority_id),
-      rowClass: task.state_id === 1 ? 'tachado' : '',
+      rowClass: task.state_id === 1 ? 'tachado' : ''
     }));
   }
   
-  obtenerValorPrioridad(priorityId: number): string {
-    const state = States.find((s) => s.codigo === priorityId);
-    return state ? state.description : 'Sin definir';
-  }
   
-
-  obtenerFechaLegible(isoDate: string): string {
-    const date = new Date(isoDate);
-    const formattedDate = date.toLocaleDateString('es-ES');
-    const formattedTime = date.toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit',
-    }); 
-    return `${formattedDate} ${formattedTime}`;
-  }
-
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
@@ -98,13 +73,29 @@ export class TareaComponent implements OnInit {
   editar(id: number) {
     this.router.navigate(['/tareas/edit', id]);
   }
-  toggleRow(checked: boolean, element: TaskDTO_In, checkbox: MatCheckbox) {
-    
-    element.state_id = checked ? 2 : 0;
+  async toggleRow(checked: boolean, element: TaskDTO_In, checkbox: MatCheckbox) {
+
+    // Si se marca como completada, establecer la fecha de completado
+    if (checked) {
+      element.completed_at = new Date().toISOString();
+      element.state_id = StatesEnum.FINALIZADA;
+    } else {
+      element.completed_at = ''; // Si desmarcas, establecer como null
+      element.state_id = StatesEnum.EN_PROGRESO;
+    }
   
-    const row = checkbox._elementRef.nativeElement.closest('tr'); 
-    if (row) {
-      row.classList.toggle('tachado', checked); 
+    try {
+      const response = await this._tareaService.updateTask(element);
+      console.log('Tarea actualizada correctamente:', response);
+      
+      // Obtener la fila más cercana y alternar la clase 'tachado'
+      const row = checkbox._elementRef.nativeElement.closest('tr');
+      if (row) {
+        row.classList.toggle('tachado', checked);
+      }
+    } catch (err) {
+      console.error('Error al actualizar la tarea:', err);
+      checkbox.checked = !checked; // revertir el estado del checkbox si hay error
     }
   }
 
@@ -123,7 +114,7 @@ export class TareaComponent implements OnInit {
     if (res) {
       try {
         await this._tareaService.eliminarTareaById(id);
-        this.refreshEvent.emit();
+        window.location.reload(); 
       } catch (e) {
         this.dialog.open(ErrorDialogComponent, {
           width: '600px',
@@ -134,6 +125,11 @@ export class TareaComponent implements OnInit {
         });
       }
     }
+  }
+
+  getPriorityDescription(codigo: number): string {
+    const state = Priority.find(p => p.codigo === codigo);
+    return state ? state.description : 'Descripción no encontrada'; // Si no se encuentra, retorna 'Descripción no encontrada'
   }
   
 }
